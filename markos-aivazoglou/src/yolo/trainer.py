@@ -21,6 +21,29 @@ from src.registry import DATA_ROOT, RunOptions, register
 # subdirectory produced by scripts/convert_cropandweed.py.
 _TASK_TO_SUBDIR = {"detect": "detection", "seg": "segmentation"}
 
+# Args Ultralytics' `check_resume` (engine/trainer.py) still lets through as
+# overrides when resuming from a checkpoint; everything else in `config` is
+# ignored in favour of the checkpoint's own saved args. Kept in sync with
+# that function's allowlist.
+_RESUME_ALLOWED_KEYS = (
+    "imgsz",
+    "batch",
+    "device",
+    "close_mosaic",
+    "augmentations",
+    "save_period",
+    "workers",
+    "cache",
+    "patience",
+    "time",
+    "freeze",
+    "val",
+    "plots",
+    "channels_last",
+    "distill_model",
+    "save_dir",
+)
+
 
 @register("yolo", "detect")
 @register("yolo", "seg")
@@ -31,7 +54,16 @@ def train_yolo(task: str, variant: str, config: dict, run: RunOptions) -> Any:
     from ``configs/detect.yaml`` / ``configs/seg.yaml``, or overridden from
     the CLI). It is mutated in place: ``data``, ``project`` and ``model`` are
     resolved/consumed here before being handed to ``model.train(**config)``.
+
+    If ``config`` has a ``resume`` key (a path to a ``last.pt``, set via the
+    CLI override ``resume=path``), this instead resumes that checkpoint:
+    ``data``/``project`` come from the checkpoint itself, and only the
+    Ultralytics resume-allowed args (``_RESUME_ALLOWED_KEYS``) are passed
+    through from ``config``.
     """
+    if "resume" in config:
+        return _resume_yolo(task, config, run)
+
     subdir = _TASK_TO_SUBDIR[task]
     data_yaml = DATA_ROOT / variant / "yolo" / subdir / "data.yaml"
     if not data_yaml.exists():
@@ -73,6 +105,44 @@ def train_yolo(task: str, variant: str, config: dict, run: RunOptions) -> Any:
     if len(devices) > 1 and (batch == -1 or 0 < batch < 1):
         config["batch"] =_ddp_auto_batch(model, config, devices, data_yaml.parent)
     return model.train(**config)
+
+
+def _resume_yolo(task: str, config: dict, run: RunOptions) -> Any:
+    """Resume training from ``config["resume"]`` (a ``last.pt`` checkpoint).
+
+    Ultralytics' ``check_resume`` reads the checkpoint's own saved train args
+    and only accepts overrides for the keys in ``_RESUME_ALLOWED_KEYS`` (e.g.
+    ``data``/``project`` come from the checkpoint, not here). ``batch`` is
+    dropped from the overrides when it's an AutoBatch sentinel (-1, or a
+    fraction in (0, 1)): re-running AutoBatch would fight the checkpoint's
+    already-resolved batch size, which we want to keep.
+    """
+    resume_path = Path(config.pop("resume")).resolve()
+    if not resume_path.exists():
+        raise FileNotFoundError(f"Resume checkpoint not found: {resume_path}")
+
+    if run.device is not None:
+        config["device"] = run.device
+
+    if run.wandb and importlib.util.find_spec("wandb") is None:
+        raise RuntimeError(
+            "run.wandb is True but the 'wandb' package isn't installed. "
+            "Install it with `uv pip install wandb`."
+        )
+    settings.update({"wandb": run.wandb})
+
+    model = YOLO(str(resume_path))
+    if run.wandb:
+        model.add_callback("on_pretrain_routine_start", _wandb_init(run.output_dir))
+
+    batch = config.get("batch")
+    is_autobatch = batch is not None and (batch == -1 or 0 < batch < 1)
+    overrides = {
+        key: config[key]
+        for key in _RESUME_ALLOWED_KEYS
+        if key in config and not (key == "batch" and is_autobatch)
+    }
+    return model.train(resume=str(resume_path), **overrides)
 
 
 def _wandb_init(output_dir: Path):

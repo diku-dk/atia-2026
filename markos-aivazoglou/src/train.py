@@ -13,6 +13,7 @@ Usage
     uv run -m src.train yolo-seg --variant Fine24 --wandb
     uv run -m src.train yolo-detect --background --wandb --device 0
     uv run -m src.train yolo-seg --device both
+    uv run -m src.train yolo-detect --variant Fine24 --device 0 resume=output/yolo-detect/Fine24/train/weights/last.pt patience=4
 """
 
 import argparse
