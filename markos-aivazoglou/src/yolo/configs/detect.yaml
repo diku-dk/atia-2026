@@ -1,0 +1,14 @@
+# Flat Ultralytics train-arg overrides of ultralytics/cfg/default.yaml.
+# Keys not listed here fall back to Ultralytics' own defaults. `data`,
+# `project` and `name` are filled in / resolved by src/yolo/trainer.py; don't
+# set them here.
+model: yolo26n.pt
+epochs: 100
+patience: 20
+imgsz: 1024
+batch: -1  # AutoBatch (60% of GPU memory); a float in (0, 1) sets the fraction
+seed: 42
+deterministic: true
+workers: 8
+device: 0
+plots: true

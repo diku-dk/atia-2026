@@ -1,0 +1,29 @@
+*.egg-info
+
+# Keep the data documentation, not the datasets.
+/data/*
+!/data/README.md
+/checkpoints/
+/weights/
+/logs/
+/wandb/
+/output/
+*.pt
+
+# Python environments, build products, and caches.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+build/
+dist/
+
+# Credentials and machine-specific files.
+.env
+.env.*
+.DS_Store
+
+**/CLAUDE.md
