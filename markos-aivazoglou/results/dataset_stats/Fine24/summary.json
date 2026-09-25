@@ -1,0 +1,86 @@
+{
+  "variant": "Fine24",
+  "n_images": 7705,
+  "n_instances": 78288,
+  "n_classes": 24,
+  "median_instances_per_image_train": 6.0,
+  "mean_instances_per_image_train": 10.238911886457718,
+  "size_bucket_pct": {
+    "tiny": 0.45,
+    "small": 34.35,
+    "medium": 40.76,
+    "large": 24.43
+  },
+  "pct_tiny_at_imgsz640": 52.03,
+  "rarest_classes": [
+    {
+      "class": "Chickweed",
+      "n_instances": 153
+    },
+    {
+      "class": "Potato",
+      "n_instances": 261
+    },
+    {
+      "class": "Pumpkin",
+      "n_instances": 388
+    },
+    {
+      "class": "Pea",
+      "n_instances": 443
+    },
+    {
+      "class": "Labiate",
+      "n_instances": 455
+    }
+  ],
+  "verification_errors": [],
+  "yolo_spot_check": "class_id=0 (Maize): yolo txt count=903, coco count=903, match=True",
+  "flagged_low_session_classes": [
+    {
+      "split": "val",
+      "class": "Corn spurry",
+      "n_sessions": 4
+    },
+    {
+      "split": "val",
+      "class": "Pea",
+      "n_sessions": 4
+    },
+    {
+      "split": "test",
+      "class": "Pea",
+      "n_sessions": 4
+    },
+    {
+      "split": "val",
+      "class": "Potato",
+      "n_sessions": 2
+    },
+    {
+      "split": "test",
+      "class": "Potato",
+      "n_sessions": 4
+    },
+    {
+      "split": "val",
+      "class": "Pumpkin",
+      "n_sessions": 3
+    },
+    {
+      "split": "test",
+      "class": "Pumpkin",
+      "n_sessions": 2
+    }
+  ],
+  "js_divergence_size_bucket": [
+    {
+      "split": "val",
+      "js_divergence_size_bucket_vs_train": 0.0022547913410449483
+    },
+    {
+      "split": "test",
+      "js_divergence_size_bucket_vs_train": 0.006418175138501953
+    }
+  ]
+}

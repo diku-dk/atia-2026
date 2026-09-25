@@ -1,0 +1,477 @@
+class_a,class_b,n_images_cooccur
+Maize,Maize,1834
+Maize,Sugar beet,1
+Maize,Soy,1
+Maize,Sunflower,78
+Maize,Potato,2
+Maize,Pumpkin,1
+Maize,Grasses,816
+Maize,Amaranth,85
+Maize,Goosefoot,215
+Maize,Knotweed,346
+Maize,Chickweed,4
+Maize,Solanales,49
+Maize,Potato weed,74
+Maize,Chamomile,31
+Maize,Thistle,180
+Maize,Mercuries,222
+Maize,Geranium,283
+Maize,Crucifer,41
+Maize,Poppy,2
+Maize,Plantago,11
+Maize,Labiate,3
+Sugar beet,Maize,1
+Sugar beet,Sugar beet,1210
+Sugar beet,Sunflower,18
+Sugar beet,Pea,1
+Sugar beet,Grasses,328
+Sugar beet,Amaranth,37
+Sugar beet,Goosefoot,183
+Sugar beet,Knotweed,119
+Sugar beet,Corn spurry,1
+Sugar beet,Chickweed,4
+Sugar beet,Solanales,49
+Sugar beet,Potato weed,53
+Sugar beet,Chamomile,18
+Sugar beet,Thistle,198
+Sugar beet,Mercuries,166
+Sugar beet,Geranium,57
+Sugar beet,Crucifer,23
+Sugar beet,Poppy,2
+Sugar beet,Plantago,10
+Sugar beet,Labiate,45
+Soy,Maize,1
+Soy,Soy,336
+Soy,Sunflower,6
+Soy,Bean,1
+Soy,Grasses,158
+Soy,Amaranth,34
+Soy,Goosefoot,69
+Soy,Knotweed,94
+Soy,Chickweed,7
+Soy,Solanales,4
+Soy,Potato weed,33
+Soy,Thistle,9
+Soy,Mercuries,50
+Soy,Geranium,3
+Soy,Crucifer,11
+Soy,Poppy,1
+Soy,Plantago,3
+Soy,Labiate,1
+Sunflower,Maize,78
+Sunflower,Sugar beet,18
+Sunflower,Soy,6
+Sunflower,Sunflower,590
+Sunflower,Grasses,254
+Sunflower,Amaranth,37
+Sunflower,Goosefoot,96
+Sunflower,Knotweed,138
+Sunflower,Chickweed,1
+Sunflower,Solanales,25
+Sunflower,Potato weed,46
+Sunflower,Chamomile,16
+Sunflower,Thistle,33
+Sunflower,Mercuries,77
+Sunflower,Geranium,6
+Sunflower,Crucifer,11
+Sunflower,Poppy,3
+Sunflower,Plantago,8
+Sunflower,Labiate,11
+Potato,Maize,2
+Potato,Potato,108
+Potato,Grasses,27
+Potato,Amaranth,1
+Potato,Goosefoot,11
+Potato,Knotweed,12
+Potato,Chickweed,1
+Potato,Solanales,2
+Potato,Mercuries,1
+Potato,Crucifer,2
+Pea,Sugar beet,1
+Pea,Pea,176
+Pea,Grasses,38
+Pea,Amaranth,13
+Pea,Goosefoot,9
+Pea,Knotweed,55
+Pea,Chickweed,2
+Pea,Potato weed,16
+Pea,Thistle,4
+Pea,Mercuries,51
+Pea,Crucifer,2
+Pea,Poppy,9
+Pea,Plantago,3
+Pea,Labiate,5
+Bean,Soy,1
+Bean,Bean,229
+Bean,Grasses,131
+Bean,Amaranth,9
+Bean,Goosefoot,27
+Bean,Knotweed,61
+Bean,Solanales,2
+Bean,Potato weed,10
+Bean,Thistle,26
+Bean,Mercuries,51
+Bean,Geranium,2
+Bean,Crucifer,7
+Bean,Poppy,1
+Bean,Plantago,4
+Bean,Labiate,2
+Pumpkin,Maize,1
+Pumpkin,Pumpkin,317
+Pumpkin,Grasses,28
+Pumpkin,Amaranth,20
+Pumpkin,Goosefoot,172
+Pumpkin,Knotweed,8
+Pumpkin,Chickweed,33
+Pumpkin,Solanales,11
+Pumpkin,Thistle,2
+Pumpkin,Mercuries,3
+Pumpkin,Crucifer,1
+Pumpkin,Plantago,1
+Grasses,Maize,816
+Grasses,Sugar beet,328
+Grasses,Soy,158
+Grasses,Sunflower,254
+Grasses,Potato,27
+Grasses,Pea,38
+Grasses,Bean,131
+Grasses,Pumpkin,28
+Grasses,Grasses,2911
+Grasses,Amaranth,197
+Grasses,Goosefoot,542
+Grasses,Knotweed,760
+Grasses,Corn spurry,50
+Grasses,Chickweed,28
+Grasses,Solanales,109
+Grasses,Potato weed,281
+Grasses,Chamomile,113
+Grasses,Thistle,460
+Grasses,Mercuries,448
+Grasses,Geranium,239
+Grasses,Crucifer,147
+Grasses,Poppy,24
+Grasses,Plantago,68
+Grasses,Labiate,74
+Amaranth,Maize,85
+Amaranth,Sugar beet,37
+Amaranth,Soy,34
+Amaranth,Sunflower,37
+Amaranth,Potato,1
+Amaranth,Pea,13
+Amaranth,Bean,9
+Amaranth,Pumpkin,20
+Amaranth,Grasses,197
+Amaranth,Amaranth,491
+Amaranth,Goosefoot,154
+Amaranth,Knotweed,100
+Amaranth,Corn spurry,4
+Amaranth,Chickweed,7
+Amaranth,Solanales,26
+Amaranth,Potato weed,112
+Amaranth,Chamomile,44
+Amaranth,Thistle,123
+Amaranth,Mercuries,61
+Amaranth,Geranium,21
+Amaranth,Crucifer,28
+Amaranth,Poppy,15
+Amaranth,Plantago,21
+Amaranth,Labiate,10
+Goosefoot,Maize,215
+Goosefoot,Sugar beet,183
+Goosefoot,Soy,69
+Goosefoot,Sunflower,96
+Goosefoot,Potato,11
+Goosefoot,Pea,9
+Goosefoot,Bean,27
+Goosefoot,Pumpkin,172
+Goosefoot,Grasses,542
+Goosefoot,Amaranth,154
+Goosefoot,Goosefoot,1266
+Goosefoot,Knotweed,240
+Goosefoot,Corn spurry,7
+Goosefoot,Chickweed,44
+Goosefoot,Solanales,82
+Goosefoot,Potato weed,199
+Goosefoot,Chamomile,56
+Goosefoot,Thistle,268
+Goosefoot,Mercuries,207
+Goosefoot,Geranium,94
+Goosefoot,Crucifer,52
+Goosefoot,Poppy,19
+Goosefoot,Plantago,25
+Goosefoot,Labiate,25
+Knotweed,Maize,346
+Knotweed,Sugar beet,119
+Knotweed,Soy,94
+Knotweed,Sunflower,138
+Knotweed,Potato,12
+Knotweed,Pea,55
+Knotweed,Bean,61
+Knotweed,Pumpkin,8
+Knotweed,Grasses,760
+Knotweed,Amaranth,100
+Knotweed,Goosefoot,240
+Knotweed,Knotweed,1156
+Knotweed,Corn spurry,5
+Knotweed,Chickweed,15
+Knotweed,Solanales,37
+Knotweed,Potato weed,191
+Knotweed,Chamomile,31
+Knotweed,Thistle,103
+Knotweed,Mercuries,317
+Knotweed,Geranium,177
+Knotweed,Crucifer,61
+Knotweed,Poppy,24
+Knotweed,Plantago,26
+Knotweed,Labiate,22
+Corn spurry,Sugar beet,1
+Corn spurry,Grasses,50
+Corn spurry,Amaranth,4
+Corn spurry,Goosefoot,7
+Corn spurry,Knotweed,5
+Corn spurry,Corn spurry,125
+Corn spurry,Solanales,2
+Corn spurry,Potato weed,1
+Corn spurry,Thistle,31
+Corn spurry,Mercuries,11
+Corn spurry,Crucifer,3
+Corn spurry,Plantago,2
+Chickweed,Maize,4
+Chickweed,Sugar beet,4
+Chickweed,Soy,7
+Chickweed,Sunflower,1
+Chickweed,Potato,1
+Chickweed,Pea,2
+Chickweed,Pumpkin,33
+Chickweed,Grasses,28
+Chickweed,Amaranth,7
+Chickweed,Goosefoot,44
+Chickweed,Knotweed,15
+Chickweed,Chickweed,86
+Chickweed,Solanales,3
+Chickweed,Potato weed,22
+Chickweed,Chamomile,2
+Chickweed,Thistle,8
+Chickweed,Mercuries,12
+Chickweed,Geranium,7
+Chickweed,Crucifer,4
+Chickweed,Poppy,5
+Chickweed,Plantago,1
+Chickweed,Labiate,1
+Solanales,Maize,49
+Solanales,Sugar beet,49
+Solanales,Soy,4
+Solanales,Sunflower,25
+Solanales,Potato,2
+Solanales,Bean,2
+Solanales,Pumpkin,11
+Solanales,Grasses,109
+Solanales,Amaranth,26
+Solanales,Goosefoot,82
+Solanales,Knotweed,37
+Solanales,Corn spurry,2
+Solanales,Chickweed,3
+Solanales,Solanales,336
+Solanales,Potato weed,27
+Solanales,Chamomile,16
+Solanales,Thistle,67
+Solanales,Mercuries,30
+Solanales,Geranium,9
+Solanales,Crucifer,7
+Solanales,Plantago,4
+Solanales,Labiate,12
+Potato weed,Maize,74
+Potato weed,Sugar beet,53
+Potato weed,Soy,33
+Potato weed,Sunflower,46
+Potato weed,Pea,16
+Potato weed,Bean,10
+Potato weed,Grasses,281
+Potato weed,Amaranth,112
+Potato weed,Goosefoot,199
+Potato weed,Knotweed,191
+Potato weed,Corn spurry,1
+Potato weed,Chickweed,22
+Potato weed,Solanales,27
+Potato weed,Potato weed,636
+Potato weed,Chamomile,93
+Potato weed,Thistle,90
+Potato weed,Mercuries,103
+Potato weed,Geranium,68
+Potato weed,Crucifer,68
+Potato weed,Poppy,30
+Potato weed,Plantago,25
+Potato weed,Labiate,15
+Chamomile,Maize,31
+Chamomile,Sugar beet,18
+Chamomile,Sunflower,16
+Chamomile,Grasses,113
+Chamomile,Amaranth,44
+Chamomile,Goosefoot,56
+Chamomile,Knotweed,31
+Chamomile,Chickweed,2
+Chamomile,Solanales,16
+Chamomile,Potato weed,93
+Chamomile,Chamomile,369
+Chamomile,Thistle,119
+Chamomile,Mercuries,10
+Chamomile,Geranium,22
+Chamomile,Crucifer,6
+Chamomile,Poppy,1
+Chamomile,Plantago,4
+Chamomile,Labiate,4
+Thistle,Maize,180
+Thistle,Sugar beet,198
+Thistle,Soy,9
+Thistle,Sunflower,33
+Thistle,Pea,4
+Thistle,Bean,26
+Thistle,Pumpkin,2
+Thistle,Grasses,460
+Thistle,Amaranth,123
+Thistle,Goosefoot,268
+Thistle,Knotweed,103
+Thistle,Corn spurry,31
+Thistle,Chickweed,8
+Thistle,Solanales,67
+Thistle,Potato weed,90
+Thistle,Chamomile,119
+Thistle,Thistle,1383
+Thistle,Mercuries,128
+Thistle,Geranium,41
+Thistle,Crucifer,47
+Thistle,Poppy,17
+Thistle,Plantago,24
+Thistle,Labiate,23
+Mercuries,Maize,222
+Mercuries,Sugar beet,166
+Mercuries,Soy,50
+Mercuries,Sunflower,77
+Mercuries,Potato,1
+Mercuries,Pea,51
+Mercuries,Bean,51
+Mercuries,Pumpkin,3
+Mercuries,Grasses,448
+Mercuries,Amaranth,61
+Mercuries,Goosefoot,207
+Mercuries,Knotweed,317
+Mercuries,Corn spurry,11
+Mercuries,Chickweed,12
+Mercuries,Solanales,30
+Mercuries,Potato weed,103
+Mercuries,Chamomile,10
+Mercuries,Thistle,128
+Mercuries,Mercuries,812
+Mercuries,Geranium,94
+Mercuries,Crucifer,41
+Mercuries,Poppy,16
+Mercuries,Plantago,23
+Mercuries,Labiate,16
+Geranium,Maize,283
+Geranium,Sugar beet,57
+Geranium,Soy,3
+Geranium,Sunflower,6
+Geranium,Bean,2
+Geranium,Grasses,239
+Geranium,Amaranth,21
+Geranium,Goosefoot,94
+Geranium,Knotweed,177
+Geranium,Chickweed,7
+Geranium,Solanales,9
+Geranium,Potato weed,68
+Geranium,Chamomile,22
+Geranium,Thistle,41
+Geranium,Mercuries,94
+Geranium,Geranium,496
+Geranium,Crucifer,9
+Geranium,Poppy,2
+Geranium,Plantago,7
+Geranium,Labiate,6
+Crucifer,Maize,41
+Crucifer,Sugar beet,23
+Crucifer,Soy,11
+Crucifer,Sunflower,11
+Crucifer,Potato,2
+Crucifer,Pea,2
+Crucifer,Bean,7
+Crucifer,Pumpkin,1
+Crucifer,Grasses,147
+Crucifer,Amaranth,28
+Crucifer,Goosefoot,52
+Crucifer,Knotweed,61
+Crucifer,Corn spurry,3
+Crucifer,Chickweed,4
+Crucifer,Solanales,7
+Crucifer,Potato weed,68
+Crucifer,Chamomile,6
+Crucifer,Thistle,47
+Crucifer,Mercuries,41
+Crucifer,Geranium,9
+Crucifer,Crucifer,352
+Crucifer,Poppy,2
+Crucifer,Plantago,12
+Crucifer,Labiate,7
+Poppy,Maize,2
+Poppy,Sugar beet,2
+Poppy,Soy,1
+Poppy,Sunflower,3
+Poppy,Pea,9
+Poppy,Bean,1
+Poppy,Grasses,24
+Poppy,Amaranth,15
+Poppy,Goosefoot,19
+Poppy,Knotweed,24
+Poppy,Chickweed,5
+Poppy,Potato weed,30
+Poppy,Chamomile,1
+Poppy,Thistle,17
+Poppy,Mercuries,16
+Poppy,Geranium,2
+Poppy,Crucifer,2
+Poppy,Poppy,114
+Poppy,Plantago,5
+Poppy,Labiate,6
+Plantago,Maize,11
+Plantago,Sugar beet,10
+Plantago,Soy,3
+Plantago,Sunflower,8
+Plantago,Pea,3
+Plantago,Bean,4
+Plantago,Pumpkin,1
+Plantago,Grasses,68
+Plantago,Amaranth,21
+Plantago,Goosefoot,25
+Plantago,Knotweed,26
+Plantago,Corn spurry,2
+Plantago,Chickweed,1
+Plantago,Solanales,4
+Plantago,Potato weed,25
+Plantago,Chamomile,4
+Plantago,Thistle,24
+Plantago,Mercuries,23
+Plantago,Geranium,7
+Plantago,Crucifer,12
+Plantago,Poppy,5
+Plantago,Plantago,225
+Plantago,Labiate,3
+Labiate,Maize,3
+Labiate,Sugar beet,45
+Labiate,Soy,1
+Labiate,Sunflower,11
+Labiate,Pea,5
+Labiate,Bean,2
+Labiate,Grasses,74
+Labiate,Amaranth,10
+Labiate,Goosefoot,25
+Labiate,Knotweed,22
+Labiate,Chickweed,1
+Labiate,Solanales,12
+Labiate,Potato weed,15
+Labiate,Chamomile,4
+Labiate,Thistle,23
+Labiate,Mercuries,16
+Labiate,Geranium,6
+Labiate,Crucifer,7
+Labiate,Poppy,6
+Labiate,Plantago,3
+Labiate,Labiate,124

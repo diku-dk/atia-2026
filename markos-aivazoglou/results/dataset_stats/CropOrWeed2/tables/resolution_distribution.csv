@@ -1,0 +1,4 @@
+split,resolution,n_images
+test,1920x1088,1262
+train,1920x1088,5073
+val,1920x1088,1370

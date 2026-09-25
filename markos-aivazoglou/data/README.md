@@ -64,3 +64,24 @@ distinct stems are assigned one per case, so no two previews repeat the same pho
 title bar states its stem. Flags: `--no-preview` skips them, `--preview-only` (re-)renders them
 from existing output without rerunning the conversion, `--preview-stem <stem>` forces the *same*
 one stem for all 8 cases instead.
+
+## Dataset statistics
+
+```bash
+uv run scripts/dataset_stats.py   # see --help (--variants, --imgsz, --format)
+```
+
+Reads `<Variant>/coco/segmentation/{train,val,test}.json` for each variant and writes
+descriptive statistics to `results/dataset_stats/<Variant>/{figures/*.png, tables/*.csv,
+summary.json, summary.md}`: resolution, class distribution, bbox size-bucket distribution
+(tiny/small/medium/large, both raw and after letterbox resize to `imgsz` 640/1024/1280),
+instances per image, bbox aspect ratio, spatial heatmap of box centres, border truncation,
+mask fill ratio (`mask_area / bbox_area`), crowding/IoU overlap, class co-occurrence
+(Fine24 only), split representativeness (sessions per class per split, JS divergence of
+size-bucket distribution train-vs-val/test), and count vs. median size per class. `area` in
+the COCO JSON is mask pixel area, not bbox area -- the script always recomputes
+`bbox_area = w * h` itself. The script asserts its counts against `data/splits/*.txt` and
+`data/splits/report.txt` rather than hardcoding them; `summary.md` has a compact table of
+headline numbers per variant, ready to paste into a report.
+
+See `results/dataset_stats/OBSERVATIONS.md` for a write-up of the key observations and conclusions.
