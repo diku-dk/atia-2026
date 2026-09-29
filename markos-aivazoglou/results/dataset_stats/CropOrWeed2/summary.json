@@ -4,35 +4,34 @@
   "n_instances": 78288,
   "n_classes": 2,
   "median_instances_per_image_train": 6.0,
-  "mean_instances_per_image_train": 10.238911886457718,
+  "mean_instances_per_image_train": 10.144839067702552,
   "size_bucket_pct": {
-    "tiny": 0.45,
-    "small": 34.35,
-    "medium": 40.76,
-    "large": 24.43
+    "tiny": 4.63,
+    "small": 32.86,
+    "medium": 38.92,
+    "large": 23.59
   },
-  "pct_tiny_at_imgsz640": 52.03,
+  "pct_tiny_at_imgsz640": 54.27,
   "rarest_classes": [
     {
       "class": "Crop",
-      "n_instances": 13923
+      "n_instances": 14534
     },
     {
       "class": "Weed",
-      "n_instances": 38019
+      "n_instances": 40309
     }
   ],
   "verification_errors": [],
-  "yolo_spot_check": "class_id=0 (Crop): yolo txt count=3777, coco count=3777, match=True",
   "flagged_low_session_classes": [],
   "js_divergence_size_bucket": [
     {
       "split": "val",
-      "js_divergence_size_bucket_vs_train": 0.0022547913410449483
+      "js_divergence_size_bucket_vs_train": 7.789528418757335e-05
     },
     {
       "split": "test",
-      "js_divergence_size_bucket_vs_train": 0.006418175138501953
+      "js_divergence_size_bucket_vs_train": 8.433917190867274e-05
     }
   ]
 }

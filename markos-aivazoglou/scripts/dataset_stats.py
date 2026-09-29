@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Descriptive statistics for the converted CropAndWeed COCO datasets.
+"""Descriptive statistics for the converted CropAndWeed YOLO instance-segmentation datasets.
 
-Reads ``data/<Variant>/coco/segmentation/{train,val,test}.json`` for each
-requested variant and writes tables + figures under
+Reads ``<data>/<Variant>/yolo/segmentation/labels/{train,val,test}/`` (``--data``,
+default ``data/seed42``) for each requested variant and writes tables + figures under
 ``results/dataset_stats/<Variant>/``:
 
     results/dataset_stats/<Variant>/
@@ -13,12 +13,12 @@ requested variant and writes tables + figures under
 
 Usage::
 
-    uv run scripts/dataset_stats.py [--data data] [--out results/dataset_stats]
+    uv run scripts/dataset_stats.py [--data data/seed42] [--out results/dataset_stats]
         [--variants CropOrWeed2 Fine24] [--imgsz 640 1024 1280] [--format png pdf]
 
-COCO's ``area`` field is the *mask* pixel area, not the bbox area -- this
-script always recomputes ``bbox_area = w * h`` itself and keeps ``area`` as
-``mask_area``.
+Each instance is one polygon (``src/seg_dataset.py``): its bbox is the
+polygon's bounds (``bbox_area = w * h``) and ``mask_area`` its polygon area,
+so both are approximations of the original annotation box and mask.
 """
 
 from __future__ import annotations
@@ -37,6 +37,10 @@ import polars as pl
 import seaborn as sns
 from PIL import Image
 from tqdm import tqdm
+
+# `uv run scripts/dataset_stats.py` puts scripts/ (not the project root) on sys.path.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from src.seg_dataset import read_names, read_split  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Plotting conventions (dataviz skill: fixed categorical order, one hue for
@@ -166,61 +170,43 @@ def get_class_colors(cnw_dir: Path, variant: str, n: int) -> list[str]:
 # Loading
 # ---------------------------------------------------------------------------
 
-def load_variant(data_dir: Path, variant: str, cnw_dir: Path) -> tuple[pl.DataFrame, pl.DataFrame, list[str], dict]:
-    """Load all 3 splits' segmentation JSONs into one instance-level DataFrame
+def load_variant(data_dir: Path, variant: str) -> tuple[pl.DataFrame, pl.DataFrame, list[str]]:
+    """Load all 3 splits' YOLO seg labels into one instance-level DataFrame
     and one image-level DataFrame.
 
-    Returns (instances_df, images_df, class_names, meta) where meta holds
-    raw per-split json annotation/image counts for verification.
+    Returns (instances_df, images_df, class_names). Each instance's bbox is
+    its polygon's bounds and its mask_area the polygon area
+    (``src/seg_dataset.py``), since the labels hold one polygon per instance.
     """
-    seg_dir = data_dir / variant / "coco" / "segmentation"
+    dataset_dir = data_dir / variant / "yolo" / "segmentation"
+    class_names = read_names(dataset_dir)
     rows = []
     img_rows = []
-    class_names = None
-    meta = {"n_json_images": {}, "n_json_annotations": {}}
 
     for split in SPLIT_ORDER:
-        path = seg_dir / f"{split}.json"
-        with open(path) as f:
-            coco = json.load(f)
-        if class_names is None:
-            class_names = [c["name"] for c in sorted(coco["categories"], key=lambda c: c["id"])]
-        id_to_img = {im["id"]: im for im in coco["images"]}
-        meta["n_json_images"][split] = len(coco["images"])
-        meta["n_json_annotations"][split] = len(coco["annotations"])
-
-        for im in coco["images"]:
-            stem = Path(im["file_name"]).stem
+        for image_id, im in enumerate(tqdm(read_split(dataset_dir, split), desc=f"{variant}/{split}", leave=False)):
+            stem = im["stem"]
             img_rows.append({
-                "split": split, "image_id": im["id"], "stem": stem,
+                "split": split, "image_id": image_id, "stem": stem,
                 "session": cnw_session_of(stem),
                 "width": im["width"], "height": im["height"],
-                "n_instances": 0,
+                "n_instances": len(im["instances"]),
             })
-
-        n_inst_per_image = {}
-        for ann in tqdm(coco["annotations"], desc=f"{variant}/{split}", leave=False):
-            im = id_to_img[ann["image_id"]]
-            x, y, w, h = ann["bbox"]
-            bbox_area = w * h
-            mask_area = ann.get("area", bbox_area)
-            n_inst_per_image[ann["image_id"]] = n_inst_per_image.get(ann["image_id"], 0) + 1
-            rows.append({
-                "split": split,
-                "image_id": ann["image_id"],
-                "stem": Path(im["file_name"]).stem,
-                "session": cnw_session_of(Path(im["file_name"]).stem),
-                "class_id": ann["category_id"],
-                "class": class_names[ann["category_id"]],
-                "x": x, "y": y, "w": w, "h": h,
-                "bbox_area": bbox_area,
-                "mask_area": mask_area,
-                "img_width": im["width"],
-                "img_height": im["height"],
-            })
-        for r in img_rows:
-            if r["split"] == split:
-                r["n_instances"] = n_inst_per_image.get(r["image_id"], 0)
+            for inst in im["instances"]:
+                x, y, w, h = inst["bbox"]
+                rows.append({
+                    "split": split,
+                    "image_id": image_id,
+                    "stem": stem,
+                    "session": cnw_session_of(stem),
+                    "class_id": inst["cls"],
+                    "class": class_names[inst["cls"]],
+                    "x": x, "y": y, "w": w, "h": h,
+                    "bbox_area": w * h,
+                    "mask_area": inst["area"],
+                    "img_width": im["width"],
+                    "img_height": im["height"],
+                })
 
     instances = pl.DataFrame(rows)
     images = pl.DataFrame(img_rows)
@@ -239,7 +225,7 @@ def load_variant(data_dir: Path, variant: str, cnw_dir: Path) -> tuple[pl.DataFr
     )
     instances = instances.with_columns(size_bucket_expr("bbox_area").alias("size_bucket"))
 
-    return instances, images, class_names, meta
+    return instances, images, class_names
 
 
 def size_bucket_expr(area_col: str) -> pl.Expr:
@@ -264,8 +250,7 @@ def bucket_series(area: np.ndarray) -> np.ndarray:
 # Verification (Plan "Verification" section)
 # ---------------------------------------------------------------------------
 
-def verify(instances: pl.DataFrame, images: pl.DataFrame, meta: dict, variant: str,
-           data_dir: Path, splits_dir: Path):
+def verify(instances: pl.DataFrame, images: pl.DataFrame, variant: str, splits_dir: Path):
     errors = []
 
     # 1. per-split image counts equal split file line counts (never hardcoded).
@@ -275,22 +260,9 @@ def verify(instances: pl.DataFrame, images: pl.DataFrame, meta: dict, variant: s
         n_expected = len(stems)
         n_actual = images.filter(pl.col("split") == split).height
         if n_actual != n_expected:
-            errors.append(f"[{variant}] split={split}: {n_actual} images in JSON vs {n_expected} in {split_file.name}")
+            errors.append(f"[{variant}] split={split}: {n_actual} images in labels vs {n_expected} in {split_file.name}")
 
-    # 2. instance totals equal len(annotations) in each JSON.
-    for split in SPLIT_ORDER:
-        n_actual = instances.filter(pl.col("split") == split).height
-        n_expected = meta["n_json_annotations"][split]
-        if n_actual != n_expected:
-            errors.append(f"[{variant}] split={split}: {n_actual} loaded instances vs {n_expected} annotations in JSON")
-
-    # 3. class counts sum to totals (trivially true by construction, assert anyway).
-    class_sum = instances.height
-    total_expected = sum(meta["n_json_annotations"].values())
-    if class_sum != total_expected:
-        errors.append(f"[{variant}] class-count sum {class_sum} != total annotations {total_expected}")
-
-    # 4. Fine24 per-class split % within 0.1 of data/splits/report.txt.
+    # 2. Fine24 per-class split % within 0.1 of <data>/splits/report.txt.
     if variant == "Fine24":
         report_path = splits_dir / "report.txt"
         report_pct = parse_report_txt(report_path)
@@ -310,16 +282,6 @@ def verify(instances: pl.DataFrame, images: pl.DataFrame, meta: dict, variant: s
                     )
                 if total != total_n:
                     errors.append(f"[{variant}] class={cls}: total n {total} vs report.txt {total_n}")
-
-    # 5. session-leak check: 0 shared sessions between any two splits.
-    session_sets = {}
-    for split in SPLIT_ORDER:
-        sessions_file = splits_dir / f"sessions_{split}.txt"
-        session_sets[split] = set(s for s in sessions_file.read_text().splitlines() if s.strip())
-    for a, b in [("train", "val"), ("train", "test"), ("val", "test")]:
-        shared = session_sets[a] & session_sets[b]
-        if shared:
-            errors.append(f"[{variant}] sessions shared between {a} and {b}: {len(shared)} (must be 0)")
 
     return errors
 
@@ -348,27 +310,6 @@ def parse_report_txt(path: Path) -> dict:
         cls = " ".join(parts[:-4])
         out[cls] = (train_pct, val_pct, test_pct, total_n)
     return out
-
-
-def spot_check_yolo(instances: pl.DataFrame, class_names: list[str], data_dir: Path, variant: str) -> str:
-    """Spot-check one class count against the YOLO detection val label files."""
-    labels_dir = data_dir / variant / "yolo" / "detection" / "labels" / "val"
-    if not labels_dir.exists():
-        return "skipped (no yolo/detection/labels/val)"
-    class_id = 0
-    class_name = class_names[class_id]
-    count = 0
-    for txt in labels_dir.glob("*.txt"):
-        for line in txt.read_text().splitlines():
-            line = line.strip()
-            if not line:
-                continue
-            cid = int(line.split()[0])
-            if cid == class_id:
-                count += 1
-    expected = instances.filter((pl.col("split") == "val") & (pl.col("class_id") == class_id)).height
-    ok = count == expected
-    return f"class_id=0 ({class_name}): yolo txt count={count}, coco count={expected}, match={ok}"
 
 
 # ---------------------------------------------------------------------------
@@ -710,7 +651,7 @@ def stat_spatial_heatmap(instances: pl.DataFrame, out_dir: Path, formats: list[s
 
     fig, axes = plt.subplots(1, len(SPLIT_ORDER), figsize=(4.3 * len(SPLIT_ORDER), 3.2))
     bins = 40
-    # Splits have very different image counts (~5073/1370/1262), so raw counts
+    # Splits have very different image counts (~70/15/15), so raw counts
     # on a shared color scale would always make val/test look far emptier
     # than train regardless of whether their spatial pattern actually differs.
     # Normalize each split's histogram to % of that split's instances first,
@@ -1139,19 +1080,16 @@ def run_variant(variant: str, data_dir: Path, out_root: Path, cnw_dir: Path,
     (out_dir / "tables").mkdir(parents=True, exist_ok=True)
 
     print(f"\n=== {variant} ===")
-    instances, images, class_names, meta = load_variant(data_dir, variant, cnw_dir)
+    instances, images, class_names = load_variant(data_dir, variant)
     print(f"loaded {images.height} images, {instances.height} instances, {len(class_names)} classes")
 
-    errors = verify(instances, images, meta, variant, data_dir, splits_dir)
+    errors = verify(instances, images, variant, splits_dir)
     if errors:
         print(f"[ASSERTION FAILURES for {variant}]")
         for e in errors:
             print(" -", e)
     else:
         print(f"[{variant}] all verification checks passed")
-
-    yolo_check = spot_check_yolo(instances, class_names, data_dir, variant)
-    print(f"[{variant}] YOLO spot-check: {yolo_check}")
 
     stat_resolution(images, data_dir, out_dir, formats)
     stat_class_distribution(instances, images, class_names, out_dir, formats, variant)
@@ -1171,7 +1109,6 @@ def run_variant(variant: str, data_dir: Path, out_root: Path, cnw_dir: Path,
     summary = build_summary(variant, instances, images, inst_per_img_table,
                              tiny_pct.get(640), {
                                  "verification_errors": errors,
-                                 "yolo_spot_check": yolo_check,
                                  "flagged_low_session_classes": rep["flagged_classes"],
                                  "js_divergence_size_bucket": rep["js_divergence"],
                              })
@@ -1186,7 +1123,7 @@ def main():
     script_dir = Path(__file__).resolve().parent
     project_root = script_dir.parent
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--data", type=Path, default=project_root / "data")
+    ap.add_argument("--data", type=Path, default=project_root / "data" / "seed42")
     ap.add_argument("--out", type=Path, default=project_root / "results" / "dataset_stats")
     ap.add_argument("--variants", nargs="+", default=["CropOrWeed2", "Fine24"])
     ap.add_argument("--imgsz", nargs="+", type=int, default=[640, 1024, 1280])

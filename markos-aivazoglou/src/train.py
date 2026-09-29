@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 """Registry-based training CLI.
 
-Picks a setup (``"<framework>-<task>"``, e.g. ``yolo-detect``), loads that
-framework's config (an Ultralytics YAML for now), applies any trailing
-``key=value`` overrides, and runs it via ``src.registry`` for one or both
-dataset variants.
+Picks a setup (``"<framework>-<task>"``, e.g. ``yolo-seg``),
+loads that framework's config (an Ultralytics YAML),
+applies any trailing ``key=value`` overrides, and runs it via ``src.registry``
+for one or both dataset variants.
 
 Usage
 -----
     uv run -m src.train --list
-    uv run -m src.train yolo-detect --variant CropOrWeed2 epochs=1 fraction=0.02
+    uv run -m src.train yolo-seg --variant CropOrWeed2 epochs=1 fraction=0.02
     uv run -m src.train yolo-seg --variant Fine24 --wandb
-    uv run -m src.train yolo-detect --background --wandb --device 0
+    uv run -m src.train yolo-seg --background --wandb --device 0
     uv run -m src.train yolo-seg --device both
-    uv run -m src.train yolo-detect --variant Fine24 --device 0 resume=output/yolo-detect/Fine24/train/weights/last.pt patience=4
+    uv run -m src.train yolo-seg --variant Fine24 --device 0 resume=output/yolo-seg/Fine24/train/weights/last.pt patience=4
 """
 
 import argparse
@@ -37,7 +37,9 @@ from src import registry  # noqa: E402
 
 # Framework import list: importing each module registers its setups.
 # Extend this (and _DEFAULT_CONFIGS below) as frameworks are added.
-_DEFAULT_CONFIGS = {"yolo": _yolo_framework.DEFAULT_CONFIGS}
+_DEFAULT_CONFIGS = {
+    "yolo": _yolo_framework.DEFAULT_CONFIGS,
+}
 
 
 def _load_config(path: Path) -> dict:
@@ -116,7 +118,7 @@ def main() -> None:
         "setup",
         nargs="?",
         choices=registry.available(),
-        help="e.g. yolo-detect, yolo-seg",
+        help="e.g. yolo-seg",
     )
     parser.add_argument(
         "--variant",
@@ -181,12 +183,12 @@ def main() -> None:
         output_dir=args.output_dir, wandb=args.wandb, device=_parse_device(args.device)
     )
     _, _, task = args.setup.partition("-")
-    fn = registry.get(args.setup)
+    trainer_cls = registry.get(args.setup)
 
     variants = registry.VARIANTS if args.variant == "all" else (args.variant,)
     for variant in variants:
         print(f"=== {args.setup} / {variant} ===")
-        fn(task, variant, dict(config), run)
+        trainer_cls(task, variant, dict(config), run).train()
 
 
 if __name__ == "__main__":

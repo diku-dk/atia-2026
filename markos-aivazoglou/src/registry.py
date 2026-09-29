@@ -1,18 +1,19 @@
 """Framework-agnostic training registry.
 
 Each training framework (Ultralytics YOLO today, more later) lives in its own
-subpackage under ``src/`` and registers one factory function per task via the
+subpackage under ``src/`` and registers one trainer *class* per task via the
 ``register`` decorator below, keyed by ``"<framework>-<task>"`` (e.g.
-``"yolo-detect"``, ``"yolo-seg"``). ``src/train.py`` is the single CLI that
+``"yolo-seg"``). ``src/train.py`` is the single CLI that
 looks a setup up in ``REGISTRY`` and calls it.
 
-Factory contract
+Trainer contract
 -----------------
-    fn(task: str, variant: str, config: dict, run: RunOptions) -> Any
+    cls(task: str, variant: str, config: dict, run: RunOptions).train() -> Any
 
-The factory builds the model from ``config`` (a framework-native dict, e.g.
-parsed from an Ultralytics YAML), runs training, and returns whatever result
-object the framework produces (for Ultralytics, its training metrics).
+The class builds the model from ``config`` (a framework-native dict, e.g.
+parsed from an Ultralytics YAML), runs training in ``train()``, and returns
+whatever result object the framework produces (for Ultralytics, its training
+metrics).
 
 This module also centralises the dataset variants and data root so every
 framework resolves paths the same way.
@@ -25,9 +26,10 @@ from typing import Callable
 # Dataset variants produced by scripts/convert_cropandweed.py.
 VARIANTS = ("CropOrWeed2", "Fine24")
 
-# Project data/ directory, resolved relative to this file (src/registry.py ->
-# project root -> data/), independent of the caller's cwd.
-DATA_ROOT = Path(__file__).resolve().parent.parent / "data"
+# Dataset root: the seed-42 split (data/seed42/, one of the per-seed conversions
+# written by scripts/split_seeds.sh), resolved relative to this file
+# (src/registry.py -> project root -> data/seed42/), independent of the caller's cwd.
+DATA_ROOT = Path(__file__).resolve().parent.parent / "data" / "seed42"
 
 REGISTRY: dict[str, Callable] = {}
 
@@ -51,8 +53,8 @@ def register(framework: str, task: str) -> Callable[[Callable], Callable]:
     """Return a decorator that stores ``fn`` in ``REGISTRY`` under ``"<framework>-<task>"``.
 
     Raises ``ValueError`` if the key is already taken. Returns ``fn``
-    unchanged, so the decorator can be stacked (e.g. one function registered
-    for both "detect" and "seg").
+    unchanged, so the decorator can be stacked (one class registered for
+    several tasks).
     """
 
     def decorator(fn: Callable) -> Callable:
@@ -68,7 +70,7 @@ def register(framework: str, task: str) -> Callable[[Callable], Callable]:
 
 
 def get(setup: str) -> Callable:
-    """Look up a registered factory by setup name, e.g. "yolo-detect"."""
+    """Look up a registered factory by setup name, e.g. "yolo-seg"."""
     try:
         return REGISTRY[setup]
     except KeyError:

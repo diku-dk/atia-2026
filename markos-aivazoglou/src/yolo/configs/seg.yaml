@@ -5,10 +5,11 @@
 model: yolo26n-seg.pt
 epochs: 100
 patience: 20
-imgsz: 1024
-batch: -1  # AutoBatch (60% of GPU memory); a float in (0, 1) sets the fraction
+imgsz: 1920 # native long side (1920x1088 frames): loaded without downscale; val also runs at this size
+crop_size: 640 # training network input: a random 640x640 crop of the native frame (see src/yolo/trainer.py); not an Ultralytics arg, popped before model.train
+batch: 128 # AutoBatch (60% of GPU memory); a float in (0, 1) sets the fraction
 seed: 42
 deterministic: true
-workers: 8
-device: 0
+workers: 6
+device: auto
 plots: true

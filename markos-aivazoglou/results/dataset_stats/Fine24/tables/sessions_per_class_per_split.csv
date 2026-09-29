@@ -1,73 +1,73 @@
 class,split,n_sessions
-Amaranth,test,35
-Amaranth,train,135
-Amaranth,val,33
-Bean,test,6
-Bean,train,11
-Bean,val,5
-Chamomile,test,31
-Chamomile,train,68
-Chamomile,val,27
-Chickweed,test,11
-Chickweed,train,14
-Chickweed,val,11
-Corn spurry,test,6
-Corn spurry,train,9
-Corn spurry,val,4
-Crucifer,test,21
-Crucifer,train,60
-Crucifer,val,29
-Geranium,test,19
-Geranium,train,51
-Geranium,val,13
-Goosefoot,test,64
-Goosefoot,train,223
-Goosefoot,val,64
-Grasses,test,86
-Grasses,train,358
-Grasses,val,110
-Knotweed,test,45
-Knotweed,train,159
-Knotweed,val,55
+Amaranth,test,42
+Amaranth,train,167
+Amaranth,val,67
+Bean,test,14
+Bean,train,21
+Bean,val,17
+Chamomile,test,51
+Chamomile,train,98
+Chamomile,val,48
+Chickweed,test,13
+Chickweed,train,24
+Chickweed,val,10
+Corn spurry,test,9
+Corn spurry,train,19
+Corn spurry,val,7
+Crucifer,test,44
+Crucifer,train,93
+Crucifer,val,31
+Geranium,test,34
+Geranium,train,70
+Geranium,val,39
+Goosefoot,test,123
+Goosefoot,train,296
+Goosefoot,val,127
+Grasses,test,237
+Grasses,train,496
+Grasses,val,247
+Knotweed,test,121
+Knotweed,train,220
+Knotweed,val,113
 Labiate,test,14
-Labiate,train,19
-Labiate,val,13
-Maize,test,24
-Maize,train,107
-Maize,val,36
-Mercuries,test,58
-Mercuries,train,131
-Mercuries,val,64
-Pea,test,4
-Pea,train,10
-Pea,val,4
-Plantago,test,17
-Plantago,train,36
-Plantago,val,15
-Poppy,test,6
-Poppy,train,14
-Poppy,val,7
-Potato,test,4
-Potato,train,9
-Potato,val,2
-Potato weed,test,30
-Potato weed,train,153
-Potato weed,val,36
-Pumpkin,test,2
-Pumpkin,train,6
-Pumpkin,val,3
-Solanales,test,32
-Solanales,train,55
-Solanales,val,21
-Soy,test,5
-Soy,train,30
-Soy,val,7
-Sugar beet,test,18
-Sugar beet,train,91
-Sugar beet,val,24
-Sunflower,test,11
-Sunflower,train,40
-Sunflower,val,11
-Thistle,test,66
-Thistle,train,186
-Thistle,val,60
+Labiate,train,38
+Labiate,val,15
+Maize,test,113
+Maize,train,160
+Maize,val,106
+Mercuries,test,79
+Mercuries,train,218
+Mercuries,val,80
+Pea,test,12
+Pea,train,18
+Pea,val,12
+Plantago,test,21
+Plantago,train,59
+Plantago,val,21
+Poppy,test,12
+Poppy,train,24
+Poppy,val,8
+Potato,test,7
+Potato,train,14
+Potato,val,9
+Potato weed,test,70
+Potato weed,train,186
+Potato weed,val,73
+Pumpkin,test,10
+Pumpkin,train,11
+Pumpkin,val,11
+Solanales,test,39
+Solanales,train,98
+Solanales,val,32
+Soy,test,22
+Soy,train,37
+Soy,val,29
+Sugar beet,test,81
+Sugar beet,train,122
+Sugar beet,val,84
+Sunflower,test,39
+Sunflower,train,58
+Sunflower,val,37
+Thistle,test,140
+Thistle,train,264
+Thistle,val,123
