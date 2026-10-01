@@ -1,0 +1,65 @@
+# EoMT-S instance segmentation on CropAndWeed: a LightningCLI config (upstream's native format, see
+# src/eomt/cli.py), written from upstream's DINOv3 configs:
+#   - configs/dinov3/coco/panoptic/eomt_small_640_2x.yaml (the only EoMT-S config): backbone, num_blocks,
+#     lr, llrd_l2_enabled, delta_weights and the attention-mask annealing schedule (as fractions, below);
+#   - configs/dinov3/coco/instance/eomt_large_{640,1280}.yaml: the instance task
+#     (MaskClassificationInstance, num_q 200, validation every 2 epochs).
+# Everything else keeps upstream's defaults (src/eomt/cli.py trainer_defaults: 16-mixed, grad clip 0.01,
+# torch.compile; MaskClassificationInstance and Transforms defaults: flip, pad + crop), except the scale
+# jitter (data.init_args.scale_range, below).
+# Filled in by src/eomt/trainer.py, don't set them here: data.init_args.path and num_classes (from the
+# variant), model.init_args.ckpt_path (from `pretrained`), trainer.devices (from --device), the checkpoint
+# callback and the logger.
+seed_everything: 42
+trainer:
+  max_epochs: 50
+  check_val_every_n_epoch: 2
+  callbacks:
+    - class_path: src.eomt.callbacks.AttnMaskAnnealing
+      init_args:
+        # Upstream eomt_small_640_2x anneals block i over global steps [start_i, end_i] of its 24-epoch
+        # COCO run (7391 steps/epoch): steps [0, 3000], epochs [10, 14] and [16, 20]. The same schedule as
+        # fractions of the run's total steps, so it completes whatever the epochs/batch/GPU count.
+        start: [0.0, 0.41667, 0.66667]
+        end: [0.01691, 0.58333, 0.83333]
+    # Upstream's (tqdm) progress bar: with `rich` installed (it is here, not upstream) Lightning picks
+    # RichProgressBar, which shows nothing in the log files the runner writes.
+    - class_path: lightning.pytorch.callbacks.TQDMProgressBar
+model:
+  # Upstream's MaskClassificationInstance with its validation mask mAP computed on the GPU
+  # (src/eomt/metrics.py): torchmetrics' numbers without its per-mask CPU RLE work.
+  class_path: src.eomt.instance.GpuMapInstance
+  init_args:
+    attn_mask_annealing_enabled: true
+    lr: 2.0e-4
+    llrd_l2_enabled: false
+    # Upstream DINOv3 checkpoints are deltas w.r.t. the DINOv3 weights.
+    delta_weights: true
+    # COCO's 133 panoptic classes -> class head re-initialised for the variant's classes.
+    load_ckpt_class_head: false
+    # warmup_steps: the module's default [500, 1000] (non-ViT, ViT); upstream's COCO [2000, 3000] would be
+    # ~30% of a 50-epoch run here (~340 steps/epoch at batch 16).
+    network:
+      class_path: src.eomt.models.eomt.EoMT
+      init_args:
+        num_q: 200
+        num_blocks: 3
+        encoder:
+          class_path: src.eomt.models.vit.ViT
+          init_args:
+            backbone_name: facebook/dinov3-vits16-pretrain-lvd1689m
+data:
+  class_path: src.eomt.datasets.cropandweed_instance.CropAndWeedInstance
+  init_args:
+    img_size: [640, 640] # whole frame (1920x1088) scale-jittered/letterboxed into it; eval: resized to fit + padded
+    batch_size: 16 # total, split across GPUs (upstream: devices x batch_size = 16)
+    # Scale jitter relative to the eval scale (the frame fit into img_size), as YOLO's `scale: 0.5`
+    # (0.5-1.5). Upstream's COCO default, 0.1-2.0, shrinks the frame below eval scale in ~half the
+    # samples, where most plants (median ~9 px at 640) become too small to learn.
+    scale_range: [0.5, 1.5]
+    num_workers: 8
+# Not a LightningCLI key: src/eomt/trainer.py downloads it and sets model.init_args.ckpt_path. Upstream's
+# COCO-panoptic EoMT-S (DINOv3), the counterpart of YOLO's COCO-pretrained yolo26m-seg.pt.
+pretrained:
+  repo_id: tue-mps/coco_panoptic_eomt_small_640_dinov3
+  filename: pytorch_model.bin

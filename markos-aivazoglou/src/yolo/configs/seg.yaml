@@ -2,14 +2,15 @@
 # Keys not listed here fall back to Ultralytics' own defaults. `data`,
 # `project` and `name` are filled in / resolved by src/yolo/trainer.py; don't
 # set them here.
-model: yolo26n-seg.pt
+model: yolo26m-seg.pt # medium: comparable in size to EoMT-small, the model it's compared with
 epochs: 100
-patience: 20
+patience: 15
 imgsz: 1920 # native long side (1920x1088 frames): loaded without downscale; val also runs at this size
-crop_size: 640 # training network input: a random 640x640 crop of the native frame (see src/yolo/trainer.py); not an Ultralytics arg, popped before model.train
-batch: 128 # AutoBatch (60% of GPU memory); a float in (0, 1) sets the fraction
+batch: 128 # fixed total batch, split across GPUs under DDP; -1 = AutoBatch (60% of GPU memory), a float in (0, 1) sets the fraction
 seed: 42
 deterministic: true
 workers: 6
 device: auto
 plots: true
+# No crop_size: the stock trainer, whole frame letterboxed to imgsz. crop_size: 640 trains on
+# random 640x640 crops of the native frame instead (see src/yolo/trainer.py).

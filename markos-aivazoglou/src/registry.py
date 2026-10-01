@@ -13,23 +13,33 @@ Trainer contract
 The class builds the model from ``config`` (a framework-native dict, e.g.
 parsed from an Ultralytics YAML), runs training in ``train()``, and returns
 whatever result object the framework produces (for Ultralytics, its training
-metrics).
+metrics). The class attributes ``BEST_CHECKPOINT`` and ``LAST_CHECKPOINT`` give
+the best and last checkpoints' paths relative to the run dir (e.g.
+``weights/best.pt``), used by ``src/evaluate.py`` and ``src/experiments.py``.
 
 This module also centralises the dataset variants and data root so every
 framework resolves paths the same way.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
 # Dataset variants produced by scripts/convert_cropandweed.py.
 VARIANTS = ("CropOrWeed2", "Fine24")
 
-# Dataset root: the seed-42 split (data/seed42/, one of the per-seed conversions
-# written by scripts/split_seeds.sh), resolved relative to this file
-# (src/registry.py -> project root -> data/seed42/), independent of the caller's cwd.
-DATA_ROOT = Path(__file__).resolve().parent.parent / "data" / "seed42"
+# Split seeds converted by scripts/split_seeds.sh, one dataset root each (data/seed<N>/).
+SPLIT_SEEDS = (42, 0, 1)
+
+
+def data_root(seed: int) -> Path:
+    """Dataset root of one split seed, resolved relative to this file
+    (src/registry.py -> project root -> data/seed<N>/), independent of the caller's cwd."""
+    return Path(__file__).resolve().parent.parent / "data" / f"seed{seed}"
+
+
+# Default dataset root: the seed-42 split.
+DATA_ROOT = data_root(42)
 
 REGISTRY: dict[str, Callable] = {}
 
@@ -47,6 +57,11 @@ class RunOptions:
     wandb: bool = False
     # Comma-separated GPU indices ("0", "1", "0,1"); None keeps the config's.
     device: str | None = None
+    # Dataset root of the split seed to train on (data/seed<N>/).
+    data_root: Path = DATA_ROOT
+    # Extra wandb.init kwargs (project, group, name, job_type, config, ...)
+    # overriding the trainer's path-derived defaults.
+    wandb_init: dict = field(default_factory=dict)
 
 
 def register(framework: str, task: str) -> Callable[[Callable], Callable]:

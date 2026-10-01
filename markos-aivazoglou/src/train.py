@@ -13,6 +13,7 @@ Usage
     uv run -m src.train yolo-seg --variant Fine24 --wandb
     uv run -m src.train yolo-seg --background --wandb --device 0
     uv run -m src.train yolo-seg --device both
+    uv run -m src.train yolo-seg --variant CropOrWeed2 --split-seed 1
     uv run -m src.train yolo-seg --variant Fine24 --device 0 resume=output/yolo-seg/Fine24/train/weights/last.pt patience=4
 """
 
@@ -32,13 +33,15 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-import src.yolo as _yolo_framework  # noqa: E402  (populates the registry; also gives DEFAULT_CONFIGS)
+import src.eomt as _eomt_framework  # noqa: E402  (populates the registry; also gives DEFAULT_CONFIGS)
+import src.yolo as _yolo_framework  # noqa: E402
 from src import registry  # noqa: E402
 
 # Framework import list: importing each module registers its setups.
 # Extend this (and _DEFAULT_CONFIGS below) as frameworks are added.
 _DEFAULT_CONFIGS = {
     "yolo": _yolo_framework.DEFAULT_CONFIGS,
+    "eomt": _eomt_framework.DEFAULT_CONFIGS,
 }
 
 
@@ -127,6 +130,13 @@ def main() -> None:
         help="Dataset variant to train on; 'all' runs each variant in sequence (default).",
     )
     parser.add_argument(
+        "--split-seed",
+        type=int,
+        choices=registry.SPLIT_SEEDS,
+        default=42,
+        help="Dataset split seed, i.e. the data/seed<N>/ root to train on (default: 42).",
+    )
+    parser.add_argument(
         "--config",
         type=Path,
         default=None,
@@ -180,7 +190,10 @@ def main() -> None:
     config.update(_parse_overrides(args.overrides))
 
     run = registry.RunOptions(
-        output_dir=args.output_dir, wandb=args.wandb, device=_parse_device(args.device)
+        output_dir=args.output_dir,
+        wandb=args.wandb,
+        device=_parse_device(args.device),
+        data_root=registry.data_root(args.split_seed),
     )
     _, _, task = args.setup.partition("-")
     trainer_cls = registry.get(args.setup)

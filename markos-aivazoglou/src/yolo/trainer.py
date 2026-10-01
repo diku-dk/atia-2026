@@ -4,11 +4,13 @@ One class, ``YOLOTrainer``, fine-tunes YOLO instance segmentation on a
 variant's ``yolo/segmentation/data.yaml``, with the pretrained checkpoint
 named in ``configs/seg.yaml``.
 
-Native-resolution crop training
---------------------------------
-The dataset's native frames are 1920x1088; ``imgsz`` in the configs is set to
-1920 (the native long side, so ``BaseDataset.load_image`` loads them
-unscaled) while ``crop_size`` (640) is the actual network input. Ultralytics'
+Native-resolution crop training (opt-in)
+-----------------------------------------
+Without ``crop_size`` (the default config), Ultralytics' stock trainer is used:
+the whole frame letterboxed to ``imgsz``. With ``crop_size`` set (e.g. 640):
+the dataset's native frames are 1920x1088; ``imgsz`` is set to 1920 (the
+native long side, so ``BaseDataset.load_image`` loads them unscaled) while
+``crop_size`` is the actual network input. Ultralytics'
 documented ``augmentations=`` hook (and ``Albumentations`` more generally)
 only runs *after* Mosaic/affine, by which point ``load_image`` has already
 downscaled the frame to ``imgsz`` -- there's no built-in way to get random
@@ -41,7 +43,7 @@ from ultralytics.utils.autobatch import check_train_batch_size
 from ultralytics.utils.patches import override_configs
 from ultralytics.utils.torch_utils import unwrap_model
 
-from src.registry import DATA_ROOT, RunOptions, register
+from src.registry import RunOptions, register
 
 # Args Ultralytics' `check_resume` (engine/trainer.py) still lets through as
 # overrides when resuming from a checkpoint; everything else in `config` is
@@ -169,10 +171,12 @@ class YOLOTrainer:
     the CLI). It is mutated in place by ``train()``: ``data``, ``project`` and
     ``model`` are resolved/consumed before being handed to
     ``model.train(**config)``. ``imgsz`` is the native frame's long side
-    (1920); ``crop_size`` (640, the real network input) isn't an Ultralytics
+    (1920); ``crop_size`` (e.g. 640, the real network input) isn't an Ultralytics
     arg, so it's popped from ``config`` and instead baked into a
     per-instance trainer subclass (see ``_native_crop_trainer``) passed as
-    ``model.train(trainer=...)``.
+    ``model.train(trainer=...)``. A ``crop_size`` of ``None`` (or no key) trains
+    with Ultralytics' stock trainer instead, i.e. the whole frame letterboxed
+    to ``imgsz``.
 
     If ``config`` has a ``resume`` key (a path to a ``last.pt``, set via the
     CLI override ``resume=path``), ``train()`` instead resumes that
@@ -182,6 +186,9 @@ class YOLOTrainer:
     yaml + CLI overrides, same as a fresh run), since it isn't part of the
     checkpoint's own saved args.
     """
+
+    BEST_CHECKPOINT = "weights/best.pt"
+    LAST_CHECKPOINT = "weights/last.pt"
 
     def __init__(self, task: str, variant: str, config: dict, run: RunOptions):
         self.task = task
@@ -194,7 +201,7 @@ class YOLOTrainer:
             return self._resume()
 
         config = self.config
-        data_yaml = DATA_ROOT / self.variant / "yolo" / "segmentation" / "data.yaml"
+        data_yaml = self.run.data_root / self.variant / "yolo" / "segmentation" / "data.yaml"
         if not data_yaml.exists():
             raise FileNotFoundError(f"No data.yaml for {self.variant} at {data_yaml}")
         config["data"] = str(data_yaml)
@@ -228,13 +235,14 @@ class YOLOTrainer:
                 "on_pretrain_routine_start", self._wandb_init_callback()
             )
 
-        crop_size = config.pop("crop_size")
+        crop_size = config.pop("crop_size", None)
         devices = [d for d in str(config.get("device", "")).split(",") if d.strip()]
         batch = config.get("batch", 16)
         if len(devices) > 1 and (batch == -1 or 0 < batch < 1):
-            config["batch"] = self._ddp_auto_batch(model, config, devices, data_yaml.parent, crop_size)
-        base = model.task_map[model.task]["trainer"]
-        return model.train(trainer=_native_crop_trainer(base, crop_size), **config)
+            config["batch"] = self._ddp_auto_batch(
+                model, config, devices, data_yaml.parent, crop_size or config["imgsz"]
+            )
+        return model.train(**self._trainer_arg(model, crop_size), **config)
 
     def _resume(self) -> Any:
         """Resume training from ``config["resume"]`` (a ``last.pt`` checkpoint).
@@ -264,7 +272,7 @@ class YOLOTrainer:
                 "on_pretrain_routine_start", self._wandb_init_callback()
             )
 
-        crop_size = config.pop("crop_size")
+        crop_size = config.pop("crop_size", None)
         batch = config.get("batch")
         is_autobatch = batch is not None and (batch == -1 or 0 < batch < 1)
         overrides = {
@@ -272,10 +280,16 @@ class YOLOTrainer:
             for key in _RESUME_ALLOWED_KEYS
             if key in config and not (key == "batch" and is_autobatch)
         }
-        base = model.task_map[model.task]["trainer"]
         return model.train(
-            trainer=_native_crop_trainer(base, crop_size), resume=str(resume_path), **overrides
+            **self._trainer_arg(model, crop_size), resume=str(resume_path), **overrides
         )
+
+    @staticmethod
+    def _trainer_arg(model: YOLO, crop_size: int | None) -> dict:
+        """``model.train`` kwargs selecting the native-crop trainer, or none (stock trainer) without ``crop_size``."""
+        if crop_size is None:
+            return {}
+        return {"trainer": _native_crop_trainer(model.task_map[model.task]["trainer"], crop_size)}
 
     def _check_wandb(self) -> None:
         if self.run.wandb and importlib.util.find_spec("wandb") is None:
@@ -292,9 +306,11 @@ class YOLOTrainer:
         calls ``wandb.init`` if no run is active, so starting one first (this
         callback is registered before the integration callbacks) wins.
         Callbacks are pickled into the DDP workers, so this also holds for
-        multi-GPU runs.
+        multi-GPU runs. ``run.wandb_init`` overrides any of the ``wandb.init``
+        kwargs (e.g. project/group/name for ``src/experiments.py``).
         """
         output_dir = self.run.output_dir.resolve()
+        overrides = dict(self.run.wandb_init)
 
         def callback(trainer) -> None:
             import wandb
@@ -308,16 +324,18 @@ class YOLOTrainer:
                 project = save_dir.parent.name
             latest_run = save_dir / "wandb" / "latest-run"
             resuming = trainer.args.resume and latest_run.exists()
-            wandb.init(
-                project=project,
-                name=save_dir.name,
-                config=vars(trainer.args),
-                id=latest_run.resolve().name.split("-", 2)[2]
+            kwargs = {
+                "project": project,
+                "name": save_dir.name,
+                "id": latest_run.resolve().name.split("-", 2)[2]
                 if resuming
                 else f"{save_dir.name}_{datetime.now().astimezone():%Y%m%d_%H%M%S}",
-                resume="allow" if resuming else None,
-                dir=str(save_dir),
-            )
+                "resume": "allow" if resuming else None,
+                "dir": str(save_dir),
+                **overrides,
+                "config": {**vars(trainer.args), **overrides.get("config", {})},
+            }
+            wandb.init(**kwargs)
 
         return callback
 

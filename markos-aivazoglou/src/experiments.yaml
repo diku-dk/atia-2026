@@ -1,0 +1,40 @@
+# Experiments run by src/experiments.py, each on every split seed x dataset variant.
+#
+#   setup: registered "<framework>-<task>" (src/registry.py).
+#   train: overrides of the setup's default config (src/yolo/configs/seg.yaml, src/eomt/configs/seg.yaml). Every experiment
+#          trains a fixed 50 epochs (the LR schedule and close_mosaic scale with it), so all get
+#          the same budget; with yolo26m-seg, 100 epochs took ~2.6 h per ft-1280 cell and were
+#          still improving by only ~0.01 mask mAP50-95 per 10 epochs.
+#   eval:  args for the framework's own evaluation (Ultralytics val(), EoMT validate()); `batch: 1` is always
+#          added so the reported speed is single-image latency.
+#
+# Fine-tuning is data-loading bound (decoding + mosaicking 1920x1088 JPEGs), so the train
+# configs cache images in RAM (decoded once, stored resized to imgsz; ~14 GB at 1280, ~3.5 GB at
+# 640, per GPU process under DDP) and use 12 workers per GPU process. At 1280 with 12 workers,
+# DDP on both GPUs peaked at ~33-37 GB RSS per GPU process and exhausted the machine's 112 GB,
+# so earlyoom (SIGTERM below 10% free RAM) killed it; ft-1280 therefore uses 4 workers (min
+# 15.5 GB available over a full-data epoch).
+
+ft-1280:
+  setup: yolo-seg
+  train: { epochs: 50, imgsz: 1280, crop_size: null, batch: 32, cache: ram, workers: 4 } # whole frame letterboxed to 1280, stock trainer
+  eval: { imgsz: 1280 }
+
+ft-640:
+  setup: yolo-seg
+  train: { epochs: 50, imgsz: 640, crop_size: null, cache: ram, workers: 12 } # whole frame letterboxed to 640, stock trainer; batch 128 as in seg.yaml
+  eval: { imgsz: 640 }
+
+# EoMT-S (DINOv3 ViT-S/16, COCO-panoptic init; src/eomt/configs/seg.yaml), the same 50-epoch budget and
+# input sizes as ft-640/ft-1280: the whole frame scale-jittered into / letterboxed to img_size. Its
+# LightningCLI config is nested, so train overrides are dotted keys. eval: the image size comes from the
+# run's own config.yaml (like YOLO's imgsz from best.pt); predictions keep the top 300 per image.
+eomt-640:
+  setup: eomt-seg
+  train: { trainer.max_epochs: 50, data.init_args.img_size: [640, 640] } # total batch 16 as in seg.yaml
+  eval: {}
+
+eomt-1280:
+  setup: eomt-seg
+  train: { trainer.max_epochs: 50, data.init_args.img_size: [1280, 1280] }
+  eval: {}
