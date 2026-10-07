@@ -7,7 +7,14 @@
 # - the Mask2Former repository by Facebook, Inc. and its affiliates
 # All used under the Apache 2.0 License.
 #
-# Copied from tue-mps/eomt@7bd19dd (training/lightning_module.py); only change: imports made package-relative.
+# Copied from tue-mps/eomt@7bd19dd (training/lightning_module.py). Changes: imports made package-relative;
+# the instance mAP is src/eomt/mask_ap.py:MaskAP (mask IoU on the GPU, CropAndWeed protocol) instead of
+# torchmetrics' MeanAveragePrecision (which RLE-encodes every mask on the CPU);
+# `block_postfix` counts the network's num_blocks + 1 outputs instead of the metrics, and the instance
+# metrics map to the last outputs (the instance module scores only the final layer, as `val_ap_all`;
+# the training losses keep upstream's per-block keys);
+# `resize_and_pad_imgs_instance_panoptic` resizes on the image's device with antialiased bilinear
+# `interpolate` (PIL's BILINEAR filter) instead of a CPU round trip through PIL.
 # ---------------------------------------------------------------
 
 import math
@@ -18,7 +25,7 @@ import torch
 import torch.nn as nn
 from torch.optim import AdamW
 from torchmetrics.classification import MulticlassJaccardIndex
-from torchmetrics.detection import PanopticQuality, MeanAveragePrecision
+from torchmetrics.detection import PanopticQuality
 from torchmetrics.functional.detection._panoptic_quality_common import (
     _prepocess_inputs,
     _Color,
@@ -37,6 +44,7 @@ from torchvision.transforms.v2.functional import pad
 import logging
 
 from .two_stage_warmup_poly_schedule import TwoStageWarmupPolySchedule
+from ..mask_ap import MaskAP
 
 bold_green = "\033[1;32m"
 reset = "\033[0m"
@@ -245,9 +253,9 @@ class LightningModule(lightning.LightningModule):
             ]
         )
 
-    def init_metrics_instance(self, num_blocks):
+    def init_metrics_instance(self, num_blocks, area_scale=1.0):
         self.metrics = nn.ModuleList(
-            [MeanAveragePrecision(iou_type="segm") for _ in range(num_blocks)]
+            [MaskAP(self.num_classes, area_scale) for _ in range(num_blocks)]
         )
 
     def init_metrics_panoptic(self, thing_classes, stuff_classes, num_blocks):
@@ -389,7 +397,7 @@ class LightningModule(lightning.LightningModule):
         if not self.network.masked_attn_enabled:
             return ""
         return (
-            f"_block_{-len(self.metrics) + block_idx + 1}"
+            f"_block_{-(self.network.num_blocks + 1) + block_idx + 1}"
             if block_idx != self.network.num_blocks
             else ""
         )
@@ -418,7 +426,10 @@ class LightningModule(lightning.LightningModule):
             results = metric.compute()
             metric.reset()
 
-            block_postfix = self.block_postfix(i)
+            # The metrics score the last len(self.metrics) of the network's num_blocks + 1 outputs.
+            block_postfix = self.block_postfix(
+                i + self.network.num_blocks + 1 - len(self.metrics)
+            )
             self.log(
                 f"metrics/{log_prefix}_ap_all{block_postfix}",
                 results["map"],
@@ -713,10 +724,13 @@ class LightningModule(lightning.LightningModule):
         for img in imgs:
             new_h, new_w = self.scale_img_size_instance_panoptic(img.shape[-2:])
 
-            pil_img = Image.fromarray(img.permute(1, 2, 0).cpu().numpy())
-            pil_img = pil_img.resize((new_w, new_h), Image.BILINEAR)
             resized_img = (
-                torch.from_numpy(np.array(pil_img)).permute(2, 0, 1).to(img.device)
+                interpolate(
+                    img[None].float(), (new_h, new_w), mode="bilinear", antialias=True
+                )[0]
+                .round()
+                .clamp(0, 255)
+                .to(img.dtype)
             )
 
             pad_h = max(0, self.img_size[-2] - resized_img.shape[-2])

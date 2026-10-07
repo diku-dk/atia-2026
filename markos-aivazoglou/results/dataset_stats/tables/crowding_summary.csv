@@ -1,0 +1,4 @@
+split,total_pairs_iou_gt0,total_pairs_iou_gt0.5,median_of_median_nn_dist,total_boxes
+train,8212,1,235.87068186230044,54793
+val,1912,0,226.42990085233885,11731
+test,1871,1,239.36401401878194,11764

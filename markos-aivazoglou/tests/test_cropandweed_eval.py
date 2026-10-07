@@ -1,31 +1,29 @@
-"""Tests for the CropAndWeed evaluation protocol (``src/cropandweed_eval.py``) on a toy YOLO-seg split."""
+"""Tests for the CropAndWeed evaluation protocol (``src/cropandweed_eval.py``) on a toy COCO ground truth."""
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
-import numpy as np
-from PIL import Image
-
 from src import cropandweed_eval
 
-_SIZE = 200
 
-
-def _norm(values):
-    return " ".join(f"{v / _SIZE:.6f}" for v in values)
+def _ann(ann_id, cls, bbox, iscrowd=0):
+    x, y, w, h = bbox
+    return {"id": ann_id, "image_id": 1, "category_id": cls, "bbox": bbox, "area": w * h, "iscrowd": iscrowd,
+            "segmentation": [[x, y, x + w, y, x + w, y + h, x, y + h]]}
 
 
 def _write_split(root: Path, split: str = "test") -> None:
-    """One 40x40 Crop plant, one 10x10 (< 16^2 px) Weed plant, and one Vegetation ignore box."""
-    for sub in ("images", "labels", "ignore"):
-        (root / sub / split).mkdir(parents=True)
-    Image.fromarray(np.zeros((_SIZE, _SIZE, 3), dtype=np.uint8)).save(root / "images" / split / "img-0001.jpg")
-    (root / "labels" / split / "img-0001.txt").write_text(
-        f"0 {_norm([10, 10, 50, 10, 50, 50, 10, 50])}\n1 {_norm([150, 150, 160, 150, 160, 160, 150, 160])}\n"
-    )
-    (root / "ignore" / split / "img-0001.txt").write_text(f"{_norm([130, 40, 60, 60])}\n")  # xywh [100, 10, 60, 60]
-    (root / "data.yaml").write_text("names:\n  0: Crop\n  1: Weed\n")
+    """One 40x40 Crop plant, one 10x10 (< 16^2 px) Weed plant, and one Vegetation crowd box per category."""
+    (root / "annotations").mkdir()
+    vegetation = [100, 10, 60, 60]
+    (root / "annotations" / f"{split}.json").write_text(json.dumps({
+        "images": [{"id": 1, "file_name": "img-0001.jpg", "width": 200, "height": 200}],
+        "annotations": [_ann(1, 0, [10, 10, 40, 40]), _ann(2, 1, [150, 150, 10, 10]),
+                        _ann(3, 0, vegetation, iscrowd=1), _ann(4, 1, vegetation, iscrowd=1)],
+        "categories": [{"id": 0, "name": "Crop"}, {"id": 1, "name": "Weed"}],
+    }))
 
 
 def _pred(category_id, bbox, score):
@@ -41,33 +39,25 @@ class CropAndWeedEvalTest(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def _ap(self, predictions):
-        rows = cropandweed_eval.evaluate(self.dataset_dir, "test", predictions, ("bbox",))
-        return {row["protocol"]: row for row in rows}
+    def _row(self, predictions):
+        (row,) = cropandweed_eval.evaluate(self.dataset_dir, "test", predictions, ("bbox",))
+        return row
 
     def test_detection_inside_vegetation_is_ignored(self):
-        # A confident Crop detection inside the Vegetation region, ranked above the true Crop hit.
-        rows = self._ap([_pred(0, [10, 10, 40, 40], 0.5), _pred(0, [110, 20, 40, 40], 0.9)])
-        self.assertAlmostEqual(rows["cropandweed"]["AP"], 1.0)
-        self.assertLess(rows["coco"]["AP"], 1.0)
+        # A confident Crop and a Weed detection inside the Vegetation region, ranked above the true Crop hit.
+        row = self._row([_pred(0, [10, 10, 40, 40], 0.5), _pred(0, [110, 20, 40, 40], 0.9),
+                         _pred(1, [120, 30, 30, 30], 0.8)])
+        self.assertAlmostEqual(row["AP/Crop"], 1.0)
+
+    def test_detection_outside_vegetation_is_a_false_positive(self):
+        row = self._row([_pred(0, [10, 10, 40, 40], 0.5), _pred(0, [10, 120, 40, 40], 0.9)])
+        self.assertLess(row["AP/Crop"], 1.0)
 
     def test_tiny_instances_are_not_evaluated(self):
-        # The < 16^2 px Weed is missed: plain COCO counts it, the CropAndWeed protocol does not.
-        rows = self._ap([_pred(0, [10, 10, 40, 40], 0.9)])
-        self.assertAlmostEqual(rows["cropandweed"]["AP"], 1.0)
-        self.assertEqual(rows["cropandweed"]["AP/Weed"], -1.0)
-        self.assertLess(rows["coco"]["AP"], 1.0)
-
-    def test_ground_truth_uses_bbox_area_and_ignore_per_category(self):
-        gt = cropandweed_eval.load_ground_truth(self.dataset_dir, "test", "cropandweed")
-        anns = gt.dataset["annotations"]
-        self.assertAlmostEqual(anns[0]["area"], 40 * 40)
-        np.testing.assert_allclose(anns[0]["bbox"], [10, 10, 40, 40], atol=1e-3)
-        crowd = [a for a in anns if a["iscrowd"]]
-        self.assertEqual(sorted(a["category_id"] for a in crowd), [0, 1])
-        np.testing.assert_allclose(crowd[0]["bbox"], [100, 10, 60, 60], atol=1e-3)
-        coco_gt = cropandweed_eval.load_ground_truth(self.dataset_dir, "test", "coco")
-        self.assertFalse(any(a["iscrowd"] for a in coco_gt.dataset["annotations"]))
+        # The < 16^2 px Weed is missed, but it is not evaluated.
+        row = self._row([_pred(0, [10, 10, 40, 40], 0.9)])
+        self.assertAlmostEqual(row["AP"], 1.0)
+        self.assertEqual(row["AP/Weed"], -1.0)
 
 
 if __name__ == "__main__":

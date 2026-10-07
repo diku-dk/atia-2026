@@ -1,58 +1,43 @@
 #!/usr/bin/env python3
-"""Convert the CropAndWeed dataset into YOLO instance-segmentation datasets.
+"""Convert the CropOrWeed2 variant of CropAndWeed into a YOLO instance-segmentation dataset plus COCO ground truth.
 
 Source layout (read-only, at ``--src``, default ``/data/cropandweed-dataset/data``)::
 
-    images/<stem>.jpg                  # 1920x1088 RGB photos, 8034 total
-    bboxes/<variant>/<stem>.csv        # no header: left,top,right,bottom,label_id,stem_x,stem_y
-    labelIds/<variant>/<stem>.png      # grayscale uint8 semantic mask, class ids 0..n-1
+    images/<stem>.jpg                      # 1920x1088 RGB photos, 8034 total
+    bboxes/CropOrWeed2/<stem>.csv          # no header: left,top,right,bottom,label_id,stem_x,stem_y
+    bboxes/CropOrWeed2Eval/<stem>.csv      # the same rows plus the Vegetation rows (label_id 255)
+    labelIds/CropOrWeed2/<stem>.png        # grayscale uint8 semantic mask, class ids 0..1
 
-``<variant>`` is one of the class groupings defined upstream in
-``cnw/utilities/datasets.py`` (``DATASETS`` dict). We convert two variants:
-``CropOrWeed2`` (n=2: crop/weed) and ``Fine24`` (n=24 species-level classes).
-For a variant with n classes, the mask value ``n`` means "soil or otherwise
-unmapped vegetation" and never becomes an instance. Bounding-box CSV rows use
-the same 0..n-1 ids.
-
-Vegetation ignore regions
--------------------------
-Upstream ``map_dataset.py`` writes two bbox sets per variant: ``bboxes/<variant>/``
-(training; only mapped classes) and ``bboxes/<variant>Eval/`` (the same rows plus
-every other box relabelled ``255``). The ``255`` rows are the paper's fallback
-*Vegetation* class -- plants that can't be identified because of their size
-(< 16^2 px bbox area) or appearance -- plus any species the variant doesn't
-map. Following the paper (Steininger et al., WACV 2023, Sec. 5.1) they are not
-training instances, but at evaluation time predictions matching them count as
-neither true nor false positives. We read them from ``<variant>Eval`` and store
-them next to the labels in a YOLO-style sidecar, ``ignore/<split>/<stem>.txt``
-(one normalized ``cx cy w h`` line per box, no class column; empty file if
-none). Ultralytics never reads it; ``src/cropandweed_eval.py`` turns the boxes
-into ``iscrowd=1`` annotations. They never appear in the labels. The 329 upstream images
-whose boxes are *all* ``255`` have no training CSV, so they are not in our
-splits at all.
+CropOrWeed2 is one of the class groupings defined upstream in ``cnw/utilities/datasets.py``
+(``DATASETS`` dict): 0 = Crop, 1 = Weed. The mask value ``2`` means "soil or otherwise unmapped
+vegetation" and never becomes an instance.
 
 Output layout (written under ``--out``, default ``markos-aivazoglou/data/seed<seed>/``)::
 
     data/seed<seed>/
-      images/<stem>.jpg                          # symlink -> absolute source image
-      splits/{train,val,test}.txt                # image stems, shared by both variants
-      splits/report.txt                          # split sizes + per-class Fine24 percentages
-      <variant>/
-        yolo/
-          segmentation/
-            images/{train,val,test}/<stem>.jpg   # relative symlink -> ../../../../images/
-            labels/{train,val,test}/<stem>.txt   # "cls x1 y1 x2 y2 ..." normalized polygon
-            ignore/{train,val,test}/<stem>.txt   # "cx cy w h" normalized Vegetation ignore boxes
-            data.yaml
-          preview_segmentation.jpg               # sample train image drawn from the written files
+      splits/{train,val,test}.txt          # image stems
+      splits/report.txt                    # split sizes + per-class instance percentages
+      images/{train,val,test}/<stem>.jpg   # symlink -> absolute source image
+      labels/{train,val,test}/<stem>.txt   # YOLO-seg: "cls x1 y1 x2 y2 ..." normalized polygon
+      annotations/{train,val,test}.json    # COCO ground truth of the same instances (+ Vegetation crowd in val/test)
+      data.yaml                            # Ultralytics dataset file
+      preview_segmentation.jpg             # sample train image drawn from the written labels
 
-Images are stored exactly once, at the top level of ``<out>/images/``, as
-symlinks pointing at the absolute path of the original file in ``--src``.
-Every per-split YOLO ``images/<split>/`` directory is itself a directory of
-*relative* symlinks back to that single top-level copy -- this is required
-because Ultralytics locates a label file by textually swapping ``/images/``
-for ``/labels/`` in the image path, so the dataset needs its own
-``images/<split>/`` tree even though no image bytes are duplicated.
+Ultralytics reads ``images/`` + ``labels/`` (it finds a label by swapping ``/images/`` for ``/labels/``
+in the image path); EoMT's dataset and ``src/cropandweed_eval.py`` read ``annotations/``. Both hold the
+same instances: one polygon each, with 0-based ``category_id`` = YOLO class, COCO ``bbox`` = polygon
+bounds and ``area`` = polygon area.
+
+Vegetation ignore regions
+-------------------------
+The upstream ``bboxes/CropOrWeed2Eval/`` CSVs add every other box relabelled ``255``: the paper's
+fallback *Vegetation* class -- plants that can't be identified because of their size (< 16^2 px bbox
+area) or appearance. Following the paper (Steininger et al., WACV 2023, Sec. 5.1) they are not
+training instances, but at evaluation time predictions matching them count as neither true nor false
+positives. That is COCO's ``iscrowd=1``: the val/test json holds each Vegetation box as a crowd
+annotation (its rectangle), once *per category*, since COCO matching is per category and Vegetation
+has no class of its own. Train has none, and the YOLO labels never contain them. The 329 upstream images whose boxes are
+*all* ``255`` have no training CSV, so they are not in our splits at all.
 
 Instance-derivation caveat
 ---------------------------
@@ -76,34 +61,26 @@ per instance, so only the largest contour of a fragmented mask is kept.
 
 Image-level, stratified splits
 -------------------------------
-Each of the 7705 usable images is assigned to train/val/test by a greedy
-iterative multi-label stratification (Sechidis et al., 2011) over its Fine24
-per-class instance counts, processing images in a ``--seed``-shuffled order,
-so image counts and every class's instance share land close to 70/15/15.
-Different seeds give genuinely different splits (``scripts/split_seeds.sh``
-builds seeds 42, 0 and 1). The images come from 913 recording sessions
-(first 8 characters of the stem) of near-duplicate frames; sessions are not
-kept within one split, so that leakage is accepted and only reported. The
-split is always stratified on Fine24 labels and shared by every variant in
---variants (Fine24's raw bbox CSVs are read for this even if "Fine24" isn't
-among --variants). See ``stratified_image_split`` for the exact algorithm;
-a summary is printed and saved to ``<out>/splits/report.txt``.
+Each usable image is assigned to train/val/test by a greedy iterative multi-label stratification
+(Sechidis et al., 2011) over its CropOrWeed2 per-class instance counts, processing images in a
+``--seed``-shuffled order, so image counts and every class's instance share land close to 70/15/15.
+Different seeds give genuinely different splits (``scripts/split_seeds.sh`` builds seeds 42, 0 and
+1). The images come from 913 recording sessions (first 8 characters of the stem) of near-duplicate
+frames; sessions are not kept within one split, so that leakage is accepted and only reported. See
+``stratified_image_split`` for the exact algorithm; a summary is printed and saved to
+``<out>/splits/report.txt``.
 
-After conversion, one sample train image per variant is rendered from the
-written label and ignore files (``<variant>/yolo/preview_segmentation.jpg``:
-filled polygons, boxes and class names, ignore boxes in grey). Each variant
-uses a *different* image: candidate stems are ranked by a score (most
-instances, then most distinct classes) over a seeded (``--seed``) random
-sample of the train split shared by both variants. Use ``--preview-stem`` to
-force one specific stem for all variants instead, ``--no-preview`` to skip
-rendering, and ``--preview-only`` to (re-)render previews from existing
-output without rerunning the conversion.
+After conversion, one sample train image is rendered from the written labels
+(``preview_segmentation.jpg``: filled polygons, boxes and class names), chosen by a score (most
+instances, then most distinct classes) over a seeded (``--seed``) random sample of the train split.
+Use ``--preview-stem`` to force one stem, ``--no-preview`` to skip rendering, and
+``--preview-only`` to (re-)render the preview from existing output without rerunning the conversion.
 
 Usage
 -----
     uv run scripts/convert_cropandweed.py --seed 0            # -> data/seed0/
     uv run scripts/convert_cropandweed.py --limit 50 --out /tmp/scratch
-    uv run scripts/convert_cropandweed.py --preview-only      # re-render data/seed42/ previews
+    uv run scripts/convert_cropandweed.py --preview-only      # re-render the data/seed42/ preview
 """
 from __future__ import annotations
 
@@ -113,54 +90,45 @@ import multiprocessing as mp
 import os
 import random
 import shutil
-import sys
+import json
 from pathlib import Path
 
 import cv2
 import numpy as np
 
-# ---------------------------------------------------------------------------
+VARIANT = "CropOrWeed2"
+SPLITS = ("train", "val", "test")
+
 # Fallback class names, used only if importing the upstream `datasets.py`
-# fails (e.g. the source checkout moves). Mirrors DATASETS['CropOrWeed2'] and
-# DATASETS['Fine24'] in cnw/utilities/datasets.py.
-# ---------------------------------------------------------------------------
-FALLBACK_NAMES = {
-    "CropOrWeed2": ["Crop", "Weed"],
-    "Fine24": [
-        "Maize", "Sugar beet", "Soy", "Sunflower", "Potato", "Pea", "Bean",
-        "Pumpkin", "Grasses", "Amaranth", "Goosefoot", "Knotweed",
-        "Corn spurry", "Chickweed", "Solanales", "Potato weed", "Chamomile",
-        "Thistle", "Mercuries", "Geranium", "Crucifer", "Poppy", "Plantago",
-        "Labiate",
-    ],
-}
+# fails (e.g. the source checkout moves). Mirrors DATASETS['CropOrWeed2'] in cnw/utilities/datasets.py.
+FALLBACK_NAMES = ["Crop", "Weed"]
 
 
-def _load_upstream_dataset(cnw_dir: Path, variant: str):
-    """Import cnw/utilities/datasets.py and return its DATASETS[variant], or None on failure."""
+def _load_upstream_dataset(cnw_dir: Path):
+    """Import cnw/utilities/datasets.py and return its DATASETS[VARIANT], or None on failure."""
     try:
         datasets_py = cnw_dir / "cnw" / "utilities" / "datasets.py"
         spec = importlib.util.spec_from_file_location("cnw_datasets", datasets_py)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        return module.DATASETS[variant]
+        return module.DATASETS[VARIANT]
     except Exception as exc:  # pragma: no cover - defensive fallback path
-        print(f"[warn] could not import upstream datasets.py ({exc}) for {variant}")
+        print(f"[warn] could not import upstream datasets.py ({exc})")
         return None
 
 
-def load_class_names(cnw_dir: Path, variant: str) -> list[str]:
-    """Return the ordered class names (index == class id) for a variant.
+def load_class_names(cnw_dir: Path) -> list[str]:
+    """Return the ordered class names (index == class id).
 
     Prefers importing the upstream `DATASETS` dict (single source of truth)
     over the hardcoded fallback above.
     """
-    dataset = _load_upstream_dataset(cnw_dir, variant)
+    dataset = _load_upstream_dataset(cnw_dir)
     if dataset is not None:
         n = len(dataset.labels)
         return [dataset.labels[i][0] for i in range(n)]
-    print(f"[warn] using fallback names for {variant}")
-    return FALLBACK_NAMES[variant]
+    print("[warn] using fallback class names")
+    return FALLBACK_NAMES
 
 
 def fallback_palette(n: int) -> list[tuple[int, int, int]]:
@@ -174,25 +142,25 @@ def fallback_palette(n: int) -> list[tuple[int, int, int]]:
     return colors
 
 
-def load_class_colors(cnw_dir: Path, variant: str, n: int) -> list[tuple[int, int, int]]:
+def load_class_colors(cnw_dir: Path, n: int) -> list[tuple[int, int, int]]:
     """Return per-class BGR colours (index == class id), for preview rendering.
 
     Prefers the upstream ``DATASETS`` colours (stored as RGB) over a synthetic
     fallback palette, converting RGB -> BGR for cv2.
     """
-    dataset = _load_upstream_dataset(cnw_dir, variant)
+    dataset = _load_upstream_dataset(cnw_dir)
     if dataset is not None:
         colors_bgr = []
         for i in range(n):
             r, g, b = dataset.labels[i][1]
             colors_bgr.append((int(b), int(g), int(r)))
         return colors_bgr
-    print(f"[warn] using fallback colour palette for {variant}")
+    print("[warn] using fallback colour palette")
     return fallback_palette(n)
 
 
 # ---------------------------------------------------------------------------
-# Per-image, per-variant instance derivation
+# Per-image instance derivation
 # ---------------------------------------------------------------------------
 
 def parse_bbox_csv(csv_path: Path, n_classes: int, width: int, height: int):
@@ -200,7 +168,7 @@ def parse_bbox_csv(csv_path: Path, n_classes: int, width: int, height: int):
 
     Returns (rows, ignore_rows, n_dropped) where each row is a dict with
     clipped integer box coordinates, class id, and stem point. ``255`` rows
-    only occur in the upstream ``<variant>Eval`` CSVs; other out-of-range ids
+    only occur in the upstream ``CropOrWeed2Eval`` CSVs; other out-of-range ids
     and degenerate boxes are dropped.
     """
     rows = []
@@ -311,14 +279,13 @@ def contours_to_polygons(contours, min_area, offset_x, offset_y):
 
 
 def process_image(args):
-    """Worker: derive instances for one (variant, stem) pair.
+    """Worker: derive the instances and Vegetation boxes of one image.
 
     Returns a plain dict (safe to pickle back from a multiprocessing.Pool).
     """
-    src_dir, variant, stem, n_classes, min_area = args
-    mask_path = src_dir / "labelIds" / variant / f"{stem}.png"
-    csv_path = src_dir / "bboxes" / variant / f"{stem}.csv"
-    img_path = src_dir / "images" / f"{stem}.jpg"
+    src_dir, stem, n_classes, min_area = args
+    mask_path = src_dir / "labelIds" / VARIANT / f"{stem}.png"
+    csv_path = src_dir / "bboxes" / VARIANT / f"{stem}.csv"
 
     mask = cv2.imread(str(mask_path), cv2.IMREAD_UNCHANGED)
     if mask is None:
@@ -326,9 +293,9 @@ def process_image(args):
     height, width = mask.shape[:2]
 
     rows, _, n_dropped = parse_bbox_csv(csv_path, n_classes, width, height)
-    # Same class rows again, plus the 255 Vegetation/unmapped rows we keep as ignore regions.
+    # Same class rows again, plus the 255 Vegetation rows we keep as ignore (crowd) regions.
     _, ignore_rows, _ = parse_bbox_csv(
-        src_dir / "bboxes" / f"{variant}Eval" / f"{stem}.csv", n_classes, width, height,
+        src_dir / "bboxes" / f"{VARIANT}Eval" / f"{stem}.csv", n_classes, width, height,
     )
     ignore_regions = [
         [float(r["left"]), float(r["top"]), float(r["right"] - r["left"]), float(r["bottom"] - r["top"])]
@@ -354,26 +321,27 @@ def process_image(args):
         if not polys:
             # No mask pixels at all, or every fragment below min_area: rectangle fallback.
             rect_poly = [l, t, right, t, right, bottom, l, bottom]
-            instances.append({"cls": cls, "yolo_polygon": [float(v) for v in rect_poly], "is_rect_fallback": True})
+            instances.append({"cls": cls, "yolo_polygon": [float(v) for v in rect_poly],
+                              "area": float((right - l) * (bottom - t)), "is_rect_fallback": True})
             continue
 
         # YOLO seg wants a single polygon per instance: use the largest contour.
-        largest_poly, _ = max(polys, key=lambda pa: pa[1])
-        instances.append({"cls": cls, "yolo_polygon": largest_poly, "is_rect_fallback": False})
+        largest_poly, area = max(polys, key=lambda pa: pa[1])
+        instances.append({"cls": cls, "yolo_polygon": largest_poly, "area": float(area), "is_rect_fallback": False})
 
     return {
         "stem": stem, "width": width, "height": height,
         "instances": instances, "ignore_regions": ignore_regions,
-        "n_dropped": n_dropped, "img_path": str(img_path),
+        "n_dropped": n_dropped,
     }
 
 
 # ---------------------------------------------------------------------------
-# Image-level, Fine24-stratified splits
+# Image-level, stratified splits
 # ---------------------------------------------------------------------------
 #
 # Every image is assigned to one split by greedy iterative multi-label
-# stratification (Sechidis et al., 2011) over its Fine24 per-class instance
+# stratification (Sechidis et al., 2011) over its per-class instance
 # counts, so both the image counts and each class's instance share land close
 # to the target ratios. The images come from 913 recording sessions (the first
 # 8 characters of the stem), whose frames are near-duplicates of the same plot.
@@ -386,36 +354,6 @@ SESSION_LEN = 8
 def session_of(stem: str) -> str:
     """The recording-session id is the first 8 characters of the stem."""
     return stem[:SESSION_LEN]
-
-
-def read_fine24_image_vectors(src: Path, stems: list[str], n_fine24: int) -> dict[str, np.ndarray]:
-    """Read raw Fine24 bbox CSVs for `stems` (regardless of --variants).
-
-    Returns stem -> np.ndarray[n_fine24] of instance counts, dropping
-    label_id >= n_fine24 (this also drops the 255 "unmapped" sentinel). Stems
-    without a Fine24 CSV get an all-zero vector.
-    """
-    vecs: dict[str, np.ndarray] = {}
-    for stem in stems:
-        vec = np.zeros(n_fine24, dtype=np.int64)
-        csv_path = src / "bboxes" / "Fine24" / f"{stem}.csv"
-        if csv_path.exists():
-            with open(csv_path) as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    parts = line.split(",")
-                    if len(parts) != 7:
-                        continue
-                    try:
-                        label_id = int(float(parts[4]))
-                    except ValueError:
-                        continue
-                    if 0 <= label_id < n_fine24:
-                        vec[label_id] += 1
-        vecs[stem] = vec
-    return vecs
 
 
 def _break_split_tie(candidates: list[str], target_images: dict[str, float],
@@ -433,7 +371,7 @@ def _break_split_tie(candidates: list[str], target_images: dict[str, float],
 
 def stratified_image_split(stem_vecs: dict[str, np.ndarray], ratios: tuple[float, float, float],
                             seed: int, n_classes: int):
-    """Image-level, Fine24-stratified split via greedy iterative stratification.
+    """Image-level, class-stratified split via greedy iterative stratification.
 
     A seeded shuffle of all images fixes the processing order. Demand is
     tracked per split and class in instances (target share of the class's
@@ -442,7 +380,7 @@ def stratified_image_split(stem_vecs: dict[str, np.ndarray], ratios: tuple[float
     those images, in shuffle order, to the split with the largest remaining
     demand for that class, breaking ties by remaining image-count demand and
     then by the seeded RNG. An assigned image counts against its split's
-    demand for every class it contains. Images with no labelled Fine24
+    demand for every class it contains. Images with no labelled
     instances are assigned last, purely by image-count demand.
 
     Returns (splits, assigned_class_count, total_class_count):
@@ -487,7 +425,7 @@ def stratified_image_split(stem_vecs: dict[str, np.ndarray], ratios: tuple[float
             assign(s, _break_split_tie(best, target_images, assigned_images, rng))
         unassigned = [s for s in unassigned if s not in assignment]
 
-    # Images with zero Fine24 instances: assign purely by image-count demand.
+    # Images with zero instances: assign purely by image-count demand.
     for s in order:
         if s in assignment:
             continue
@@ -500,11 +438,11 @@ def stratified_image_split(stem_vecs: dict[str, np.ndarray], ratios: tuple[float
     return splits, assigned_class_count, total_class_count
 
 
-def print_split_report(out: Path, fine24_names: list[str], splits: dict[str, list[str]], seed: int,
+def print_split_report(out: Path, class_names: list[str], splits: dict[str, list[str]], seed: int,
                         assigned_class_count: dict[str, np.ndarray], total_class_count: np.ndarray) -> None:
     """Print (and save to <out>/splits/report.txt) a summary of the image-level split."""
     split_names = ("train", "val", "test")
-    lines = [f"CropAndWeed image-level, Fine24-stratified split report (seed {seed})", "=" * 60, ""]
+    lines = [f"CropOrWeed2 image-level, class-stratified split report (seed {seed})", "=" * 60, ""]
 
     total_images = sum(len(splits[sp]) for sp in split_names)
     lines.append(f"{'split':<8}{'images':>10}{'images %':>10}")
@@ -523,8 +461,8 @@ def print_split_report(out: Path, fine24_names: list[str], splits: dict[str, lis
     lines.append(f"sessions spanning splits: {len(spanning)} / {n_sessions} (near-duplicate leakage, accepted)")
     lines.append("")
 
-    lines.append(f"{'Fine24 class':<16}{'train %':>10}{'val %':>10}{'test %':>10}{'total n':>10}")
-    for c, name in enumerate(fine24_names):
+    lines.append(f"{'class':<16}{'train %':>10}{'val %':>10}{'test %':>10}{'total n':>10}")
+    for c, name in enumerate(class_names):
         total = int(total_class_count[c])
         pct = {sp: (100.0 * assigned_class_count[sp][c] / total if total else 0.0) for sp in split_names}
         lines.append(f"{name:<16}{pct['train']:>10.1f}{pct['val']:>10.1f}{pct['test']:>10.1f}{total:>10}")
@@ -536,29 +474,19 @@ def print_split_report(out: Path, fine24_names: list[str], splits: dict[str, lis
     (splits_dir / "report.txt").write_text(report)
 
 
-def clear_stale_yolo_outputs(task_dir: Path) -> None:
-    """Remove existing per-split images/labels/ignore dirs and any ultralytics *.cache files.
+def clear_stale_outputs(out: Path) -> None:
+    """Remove existing images/labels/annotations dirs and any Ultralytics *.cache files.
 
     Images can move between splits whenever the split assignment changes, so
     a rerun must wipe the previous per-split trees first -- otherwise stale
     symlinks/labels from an old split assignment would linger in the wrong
-    split alongside the freshly written ones.
+    split alongside the freshly written ones. ``images/`` only holds symlinks.
     """
-    for kind in ("images", "labels", "ignore"):
-        for split_name in ("train", "val", "test"):
-            split_dir = task_dir / kind / split_name
-            if split_dir.exists():
-                shutil.rmtree(split_dir)
-    for cache in task_dir.rglob("*.cache"):
+    for kind in ("images", "labels", "annotations"):
+        if (out / kind).exists():
+            shutil.rmtree(out / kind)
+    for cache in out.glob("*.cache"):
         cache.unlink()
-
-
-def symlink_idempotent(target: Path, link: Path):
-    """Create `link` -> `target` unless it already exists (idempotent rerun)."""
-    if link.is_symlink() or link.exists():
-        return
-    link.parent.mkdir(parents=True, exist_ok=True)
-    os.symlink(target, link)
 
 
 # ---------------------------------------------------------------------------
@@ -568,7 +496,6 @@ def symlink_idempotent(target: Path, link: Path):
 def write_yolo_labels(label_dir: Path, images_meta: dict, split_stems: list[str]):
     """Write one "cls x1 y1 x2 y2 ..." (normalized polygon) line per instance, one file per image."""
     label_dir.mkdir(parents=True, exist_ok=True)
-    n_instances = 0
     for stem in split_stems:
         meta = images_meta[stem]
         w, h = meta["width"], meta["height"]
@@ -580,45 +507,47 @@ def write_yolo_labels(label_dir: Path, images_meta: dict, split_stems: list[str]
                 norm.append(poly[i] / w)
                 norm.append(poly[i + 1] / h)
             lines.append(str(inst["cls"]) + " " + " ".join(f"{v:.6f}" for v in norm))
-            n_instances += 1
-        # Overwrite unconditionally so reruns pick up changed data (idempotent
-        # in the sense of "same output", unlike the symlinks which are skipped).
         (label_dir / f"{stem}.txt").write_text("\n".join(lines) + ("\n" if lines else ""))
-    return n_instances
 
 
-def write_yolo_ignore(ignore_dir: Path, images_meta: dict, split_stems: list[str]):
-    """Write the Vegetation ignore boxes as "cx cy w h" (normalized, no class) lines, one file per image.
+def write_coco(path: Path, images_meta: dict, split_stems: list[str], class_names: list[str], crowd: bool):
+    """Write the split's COCO ground truth: the same instances as the YOLO labels, 0-based ``category_id``.
 
-    Every image gets a file (empty if it has no ignore boxes). Ultralytics only
-    reads ``images/`` and ``labels/``, so this sidecar never reaches training;
-    ``src/cropandweed_eval.py`` reads it for the paper's evaluation protocol.
+    With ``crowd`` (val/test), each Vegetation box is added as an ``iscrowd=1`` rectangle once per
+    category, so COCO evaluation ignores detections of any class that match it.
     """
-    ignore_dir.mkdir(parents=True, exist_ok=True)
-    for stem in split_stems:
+    images, annotations = [], []
+
+    def add(image_id, cls, polygon, area, iscrowd):
+        xs, ys = polygon[0::2], polygon[1::2]
+        bbox = [min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)]
+        annotations.append({"id": len(annotations) + 1, "image_id": image_id, "category_id": cls,
+                            "segmentation": [polygon], "bbox": bbox, "area": area, "iscrowd": iscrowd})
+
+    for image_id, stem in enumerate(split_stems, start=1):
         meta = images_meta[stem]
-        w, h = meta["width"], meta["height"]
-        lines = [
-            f"{(l + bw / 2) / w:.6f} {(t + bh / 2) / h:.6f} {bw / w:.6f} {bh / h:.6f}"
-            for l, t, bw, bh in meta["ignore_regions"]
-        ]
-        (ignore_dir / f"{stem}.txt").write_text("\n".join(lines) + ("\n" if lines else ""))
+        images.append({"id": image_id, "file_name": f"{stem}.jpg", "width": meta["width"], "height": meta["height"]})
+        for inst in meta["instances"]:
+            add(image_id, inst["cls"], inst["yolo_polygon"], inst["area"], 0)
+        if crowd:
+            for l, t, bw, bh in meta["ignore_regions"]:
+                for cls in range(len(class_names)):
+                    add(image_id, cls, [l, t, l + bw, t, l + bw, t + bh, l, t + bh], bw * bh, 1)
+
+    categories = [{"id": i, "name": name} for i, name in enumerate(class_names)]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"images": images, "annotations": annotations, "categories": categories}))
 
 
-def write_yolo_images(images_dir: Path, split: str, split_stems: list[str], top_level_images: Path):
-    split_dir = images_dir / split
+def write_yolo_images(split_dir: Path, split_stems: list[str], src_images: Path):
+    """Symlink each image of the split to its absolute source path."""
     split_dir.mkdir(parents=True, exist_ok=True)
     for stem in split_stems:
-        link = split_dir / f"{stem}.jpg"
-        if link.is_symlink() or link.exists():
-            continue
-        # Relative symlink back to the shared top-level images/ dir.
-        rel_target = os.path.relpath(top_level_images / f"{stem}.jpg", start=split_dir)
-        os.symlink(rel_target, link)
+        os.symlink((src_images / f"{stem}.jpg").resolve(), split_dir / f"{stem}.jpg")
 
 
-def write_data_yaml(path: Path, task_dir: Path, class_names: list[str]):
-    lines = [f"path: {task_dir.resolve()}", "train: images/train", "val: images/val", "test: images/test", "names:"]
+def write_data_yaml(path: Path, out: Path, class_names: list[str]):
+    lines = [f"path: {out.resolve()}", "train: images/train", "val: images/val", "test: images/test", "names:"]
     for i, name in enumerate(class_names):
         safe = name.replace(":", " -")
         lines.append(f"  {i}: {safe}")
@@ -626,61 +555,29 @@ def write_data_yaml(path: Path, task_dir: Path, class_names: list[str]):
 
 
 # ---------------------------------------------------------------------------
-# Annotation previews (one sample image per variant, drawn from the *written* files)
+# Annotation preview (one sample train image, drawn from the *written* labels)
 # ---------------------------------------------------------------------------
 
-def _seg_dir(out: Path, variant: str) -> Path:
-    return out / variant / "yolo" / "segmentation"
+def choose_preview_stem(out: Path, seed: int, sample_size: int = 200) -> str | None:
+    """Pick a train stem with many instances/classes.
 
-
-def choose_preview_stems(out: Path, variants: list[str], seed: int, n: int, sample_size: int = 200) -> list[str]:
-    """Pick `n` distinct train-split stems shared by all variants, favouring many instances/classes.
-
-    Reads the already-written YOLO train labels of each variant (rather than
-    re-deriving instances), takes a seeded random sample of the stems common
-    to all variants, ranks them by (total instances, number of distinct
-    (variant, class) pairs) descending, and returns the top `n` distinct
-    stems -- one per variant, so every preview shows a different image.
+    Reads the already-written YOLO train labels (rather than re-deriving
+    instances), takes a seeded random sample of them and returns the one with
+    the most (total instances, distinct classes).
     """
-    per_variant: dict[str, tuple[dict[str, int], dict[str, set[int]]]] = {}
-    common_stems = None
-    for v in variants:
-        label_dir = _seg_dir(out, v) / "labels" / "train"
-        if not label_dir.exists():
-            print(f"[preview] {label_dir} does not exist; cannot choose preview stems")
-            return []
-        counts: dict[str, int] = {}
-        classes: dict[str, set[int]] = {}
-        for path in label_dir.glob("*.txt"):
-            cls_ids = [int(line.split()[0]) for line in path.read_text().splitlines() if line.strip()]
-            counts[path.stem] = len(cls_ids)
-            classes[path.stem] = set(cls_ids)
-        per_variant[v] = (counts, classes)
-        common_stems = set(counts) if common_stems is None else (common_stems & set(counts))
-
-    if not common_stems:
-        print("[preview] no stems shared by all variants; skipping previews")
-        return []
-
+    label_dir = out / "labels" / "train"
+    if not label_dir.exists():
+        print(f"[preview] {label_dir} does not exist; cannot choose a preview stem")
+        return None
+    scores: dict[str, tuple[int, int]] = {}
+    for path in label_dir.glob("*.txt"):
+        cls_ids = [int(line.split()[0]) for line in path.read_text().splitlines() if line.strip()]
+        scores[path.stem] = (len(cls_ids), len(set(cls_ids)))
+    if not scores:
+        return None
     rng = random.Random(seed)
-    sample = rng.sample(sorted(common_stems), min(sample_size, len(common_stems)))
-
-    def score(stem: str) -> tuple[int, int]:
-        total_instances = 0
-        distinct = set()
-        for v in variants:
-            counts, classes = per_variant[v]
-            total_instances += counts.get(stem, 0)
-            distinct |= {(v, c) for c in classes.get(stem, set())}
-        return (total_instances, len(distinct))
-
-    ranked = sorted(sample, key=score, reverse=True)
-    top = ranked[:n]
-    if len(top) < n:
-        print(f"[preview] warning: only {len(top)} candidate stems available for {n} preview cases; reusing some")
-        while len(top) < n and top:
-            top.append(top[len(top) % len(ranked)])
-    return top
+    sample = rng.sample(sorted(scores), min(sample_size, len(scores)))
+    return max(sample, key=lambda stem: scores[stem])
 
 
 def load_yolo_instances(path: Path, width: int, height: int) -> list[dict]:
@@ -696,20 +593,6 @@ def load_yolo_instances(path: Path, width: int, height: int) -> list[dict]:
         bbox = [pts[:, 0].min(), pts[:, 1].min(), pts[:, 0].max(), pts[:, 1].max()]
         instances.append({"cls": int(parts[0]), "bbox": bbox, "polygon": pts})
     return instances
-
-
-def load_yolo_ignore(path: Path, width: int, height: int) -> list[list[float]]:
-    """Return the ignore boxes (xyxy px) of a normalized "cx cy w h" sidecar file."""
-    if not path.exists():
-        return []
-    boxes = []
-    for line in path.read_text().splitlines():
-        if not line.strip():
-            continue
-        cx, cy, bw, bh = (float(v) for v in line.split())
-        cx, bw, cy, bh = cx * width, bw * width, cy * height, bh * height
-        boxes.append([cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2])
-    return boxes
 
 
 def draw_label(img: np.ndarray, text: str, org: tuple[int, int], color: tuple[int, int, int]):
@@ -733,14 +616,11 @@ def draw_title(img: np.ndarray, text: str):
     cv2.putText(img, text, (10, th + 8), font, font_scale, (255, 255, 255), thickness, cv2.LINE_AA)
 
 
-def draw_instances(img: np.ndarray, instances: list[dict], ignore_boxes: list[list[float]],
+def draw_instances(img: np.ndarray, instances: list[dict],
                     class_names: list[str], class_colors: list[tuple[int, int, int]]):
-    """Draw semi-transparent filled polygons + outline + bbox with class-name labels, and ignore boxes in grey."""
+    """Draw semi-transparent filled polygons + outline + bbox with class-name labels."""
     def color_for(cls: int) -> tuple[int, int, int]:
         return class_colors[cls] if 0 <= cls < len(class_colors) else (255, 255, 255)
-
-    for l, t, r, b in ignore_boxes:
-        cv2.rectangle(img, (int(round(l)), int(round(t))), (int(round(r)), int(round(b))), (160, 160, 160), 2)
 
     overlay = img.copy()
     for inst in instances:
@@ -757,38 +637,25 @@ def draw_instances(img: np.ndarray, instances: list[dict], ignore_boxes: list[li
         draw_label(img, name, (l, t), color)
 
 
-def render_previews(args, class_names: dict[str, list[str]], class_colors: dict[str, list[tuple[int, int, int]]]):
-    """Render one preview image per variant from the written YOLO-seg labels and ignore sidecars.
+def render_preview(args, class_names: list[str], class_colors: list[tuple[int, int, int]]):
+    """Render one train image with its written YOLO-seg labels to ``<out>/preview_segmentation.jpg``."""
+    stem = args.preview_stem or choose_preview_stem(args.out, args.seed, args.preview_sample_size)
+    if stem is None:
+        print("[preview] could not choose a preview stem; skipping the preview")
+        return
+    img_path = args.out / "images" / "train" / f"{stem}.jpg"
+    img = cv2.imread(str(img_path))
+    if img is None:
+        print(f"[preview] could not read {img_path}; skipping the preview")
+        return
+    height, width = img.shape[:2]
+    instances = load_yolo_instances(args.out / "labels" / "train" / f"{stem}.txt", width, height)
 
-    Each variant gets its own stem (unless --preview-stem forces one stem for
-    all of them).
-    """
-    if args.preview_stem:
-        stems = [args.preview_stem] * len(args.variants)
-    else:
-        stems = choose_preview_stems(args.out, args.variants, args.seed, len(args.variants), args.preview_sample_size)
-        if not stems:
-            print("[preview] could not choose preview stems; skipping previews")
-            return
-
-    for v, stem in zip(args.variants, stems):
-        img_path = args.out / "images" / f"{stem}.jpg"
-        base_img = cv2.imread(str(img_path))
-        if base_img is None:
-            print(f"[preview] could not read {img_path}; skipping {v}")
-            continue
-        height, width = base_img.shape[:2]
-        seg_dir = _seg_dir(args.out, v)
-        instances = load_yolo_instances(seg_dir / "labels" / "train" / f"{stem}.txt", width, height)
-        ignore_boxes = load_yolo_ignore(seg_dir / "ignore" / "train" / f"{stem}.txt", width, height)
-
-        img = base_img.copy()
-        draw_instances(img, instances, ignore_boxes, class_names[v], class_colors[v])
-        draw_title(img, f"{v} | {stem} ({len(instances)} instances, {len(ignore_boxes)} ignore boxes in grey)")
-        out_path = args.out / v / "yolo" / "preview_segmentation.jpg"
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        cv2.imwrite(str(out_path), img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
-        print(f"[preview] {v} -> stem={stem}, wrote {out_path}")
+    draw_instances(img, instances, class_names, class_colors)
+    draw_title(img, f"{VARIANT} | {stem} ({len(instances)} instances)")
+    out_path = args.out / "preview_segmentation.jpg"
+    cv2.imwrite(str(out_path), img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+    print(f"[preview] stem={stem}, wrote {out_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -803,18 +670,17 @@ def main():
     ap.add_argument("--cnw", type=Path, default=Path("/data/cropandweed-dataset"),
                      help="root of the cropandweed-dataset checkout, for importing cnw/utilities/datasets.py")
     ap.add_argument("--out", type=Path, default=None, help="output root (default: data/seed<seed>)")
-    ap.add_argument("--variants", nargs="+", default=["CropOrWeed2", "Fine24"])
     ap.add_argument("--split", nargs=3, type=float, default=[0.7, 0.15, 0.15], metavar=("TRAIN", "VAL", "TEST"))
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 1))
     ap.add_argument("--min-area", type=float, default=10.0)
     ap.add_argument("--limit", type=int, default=None, help="only process the first N stems, for debugging")
     ap.add_argument("--preview", dest="preview", action="store_true", default=True,
-                     help="render annotation previews after conversion (default: on)")
+                     help="render the annotation preview after conversion (default: on)")
     ap.add_argument("--no-preview", dest="preview", action="store_false",
-                     help="skip rendering annotation previews")
+                     help="skip rendering the annotation preview")
     ap.add_argument("--preview-only", action="store_true",
-                     help="skip conversion; only (re-)render previews from existing --out output")
+                     help="skip conversion; only (re-)render the preview from existing --out output")
     ap.add_argument("--preview-stem", type=str, default=None,
                      help="force the preview sample image, instead of choosing one automatically")
     ap.add_argument("--preview-sample-size", type=int, default=200,
@@ -828,118 +694,74 @@ def main():
     src: Path = args.src
     out: Path = args.out
     out.mkdir(parents=True, exist_ok=True)
-    images_dir = out / "images"
-    images_dir.mkdir(parents=True, exist_ok=True)
 
-    # ---- 1. class names + colours per variant -----------------------------
-    class_names = {v: load_class_names(args.cnw, v) for v in args.variants}
-    n_classes = {v: len(class_names[v]) for v in args.variants}
-    class_colors = {v: load_class_colors(args.cnw, v, n_classes[v]) for v in args.variants}
-    for v in args.variants:
-        print(f"[{v}] {n_classes[v]} classes: {class_names[v]}")
+    # ---- 1. class names + colours -------------------------------------------
+    class_names = load_class_names(args.cnw)
+    n_classes = len(class_names)
+    class_colors = load_class_colors(args.cnw, n_classes)
+    print(f"[{VARIANT}] {n_classes} classes: {class_names}")
 
     if args.preview_only:
-        render_previews(args, class_names, class_colors)
+        render_preview(args, class_names, class_colors)
         return
 
-    # ---- 2. stems: intersection of bboxes & masks per variant, union across variants ----
-    variant_stems: dict[str, set[str]] = {}
-    for v in args.variants:
-        bbox_dir = src / "bboxes" / v
-        mask_dir = src / "labelIds" / v
-        bbox_stems = {p.stem for p in bbox_dir.glob("*.csv")}
-        mask_stems = {p.stem for p in mask_dir.glob("*.png")}
-        common = bbox_stems & mask_stems
-        variant_stems[v] = common
-        print(f"[{v}] {len(bbox_stems)} bbox files, {len(mask_stems)} mask files, {len(common)} usable stems")
-
-    union_stems = sorted(set().union(*variant_stems.values()))
+    # ---- 2. stems: images with both a bbox CSV and a mask ---------------------
+    bbox_stems = {p.stem for p in (src / "bboxes" / VARIANT).glob("*.csv")}
+    mask_stems = {p.stem for p in (src / "labelIds" / VARIANT).glob("*.png")}
+    stems = sorted(bbox_stems & mask_stems)
+    print(f"[{VARIANT}] {len(bbox_stems)} bbox files, {len(mask_stems)} mask files, {len(stems)} usable stems")
     if args.limit is not None:
         # Deterministic small subset for smoke testing.
-        union_stems = sorted(union_stems)[: args.limit]
-        for v in args.variants:
-            variant_stems[v] = variant_stems[v] & set(union_stems)
+        stems = stems[: args.limit]
 
-    # ---- 2b. image-level, Fine24-stratified split (shared by all variants) --------
-    # Always read Fine24 CSVs for stratification, even if Fine24 isn't in --variants.
-    fine24_names = load_class_names(args.cnw, "Fine24")
-    n_fine24 = len(fine24_names)
-    stem_vecs = read_fine24_image_vectors(src, union_stems, n_fine24)
+    # ---- 3. per-image instance derivation -------------------------------------
+    print(f"[{VARIANT}] processing {len(stems)} images with {args.workers} workers...")
+    work_items = [(src, stem, n_classes, args.min_area) for stem in stems]
+    images_meta: dict[str, dict] = {}
+    if args.workers > 1:
+        with mp.Pool(args.workers) as pool:
+            results = list(pool.imap_unordered(process_image, work_items, chunksize=16))
+    else:
+        results = [process_image(item) for item in work_items]
+    for result in results:
+        if result is not None:
+            images_meta[result.pop("stem")] = result
 
+    # ---- 4. image-level, class-stratified split ---------------------------------
+    stem_vecs = {
+        stem: np.bincount([inst["cls"] for inst in meta["instances"]], minlength=n_classes).astype(np.int64)
+        for stem, meta in images_meta.items()
+    }
     splits, assigned_class_count, total_class_count = stratified_image_split(
-        stem_vecs, tuple(args.split), args.seed, n_fine24,
+        stem_vecs, tuple(args.split), args.seed, n_classes,
     )
     splits_dir = out / "splits"
     splits_dir.mkdir(parents=True, exist_ok=True)
-    for name, stems in splits.items():
-        (splits_dir / f"{name}.txt").write_text("\n".join(sorted(stems)) + "\n")
-    print(f"splits: train={len(splits['train'])} val={len(splits['val'])} test={len(splits['test'])} total={len(union_stems)}")
-    print_split_report(out, fine24_names, splits, args.seed, assigned_class_count, total_class_count)
+    for name, split_stems in splits.items():
+        (splits_dir / f"{name}.txt").write_text("\n".join(split_stems) + "\n")
+    print(f"splits: train={len(splits['train'])} val={len(splits['val'])} test={len(splits['test'])} total={len(images_meta)}")
+    print_split_report(out, class_names, splits, args.seed, assigned_class_count, total_class_count)
 
-    # ---- 3. top-level image symlinks (union of both variants) ------------
-    for stem in union_stems:
-        target = (src / "images" / f"{stem}.jpg").resolve()
-        symlink_idempotent(target, images_dir / f"{stem}.jpg")
+    # ---- 5. writers -------------------------------------------------------------
+    clear_stale_outputs(out)
+    for split_name in SPLITS:
+        split_stems = splits[split_name]
+        write_yolo_images(out / "images" / split_name, split_stems, src / "images")
+        write_yolo_labels(out / "labels" / split_name, images_meta, split_stems)
+        write_coco(out / "annotations" / f"{split_name}.json", images_meta, split_stems, class_names,
+                   crowd=split_name != "train")
+    write_data_yaml(out / "data.yaml", out, class_names)
 
-    # ---- 4. per-image, per-variant instance derivation --------------------
-    for v in args.variants:
-        stems_v = sorted(variant_stems[v])
-        print(f"[{v}] processing {len(stems_v)} images with {args.workers} workers...")
-        work_items = [(src, v, stem, n_classes[v], args.min_area) for stem in stems_v]
-
-        images_meta: dict[str, dict] = {}
-        total_dropped = 0
-        total_rect_fallback = 0
-        total_instances = 0
-        total_ignore = 0
-
-        if args.workers > 1:
-            with mp.Pool(args.workers) as pool:
-                for result in pool.imap_unordered(process_image, work_items, chunksize=16):
-                    if result is None:
-                        continue
-                    stem = result.pop("stem")
-                    images_meta[stem] = result
-        else:
-            for item in work_items:
-                result = process_image(item)
-                if result is None:
-                    continue
-                stem = result.pop("stem")
-                images_meta[stem] = result
-
-        for meta in images_meta.values():
-            total_dropped += meta["n_dropped"]
-            total_instances += len(meta["instances"])
-            total_ignore += len(meta["ignore_regions"])
-            total_rect_fallback += sum(1 for i in meta["instances"] if i["is_rect_fallback"])
-
-        # ---- 5. writers -----------------------------------------------------
-        names = class_names[v]
-
-        # Images move between splits whenever the split assignment changes, so
-        # wipe stale per-split trees (and ultralytics label caches) first.
-        seg_dir = _seg_dir(out, v)
-        clear_stale_yolo_outputs(seg_dir)
-
-        for split_name in ("train", "val", "test"):
-            split_stems = [s for s in splits[split_name] if s in images_meta]
-            write_yolo_images(seg_dir / "images", split_name, split_stems, images_dir)
-            write_yolo_labels(seg_dir / "labels" / split_name, images_meta, split_stems)
-            write_yolo_ignore(seg_dir / "ignore" / split_name, images_meta, split_stems)
-
-        write_data_yaml(seg_dir / "data.yaml", seg_dir, names)
-
-        print(
-            f"[{v}] SUMMARY images={len(images_meta)} instances={total_instances} ignore_regions={total_ignore} "
-            f"rect_fallback={total_rect_fallback} dropped_rows={total_dropped} "
-            f"(train={len([s for s in splits['train'] if s in images_meta])}, "
-            f"val={len([s for s in splits['val'] if s in images_meta])}, "
-            f"test={len([s for s in splits['test'] if s in images_meta])})"
-        )
+    metas = images_meta.values()
+    print(
+        f"[{VARIANT}] SUMMARY images={len(images_meta)} instances={sum(len(m['instances']) for m in metas)} "
+        f"ignore_regions={sum(len(m['ignore_regions']) for m in metas)} "
+        f"rect_fallback={sum(i['is_rect_fallback'] for m in metas for i in m['instances'])} "
+        f"dropped_rows={sum(m['n_dropped'] for m in metas)}"
+    )
 
     if args.preview:
-        render_previews(args, class_names, class_colors)
+        render_preview(args, class_names, class_colors)
 
 
 if __name__ == "__main__":

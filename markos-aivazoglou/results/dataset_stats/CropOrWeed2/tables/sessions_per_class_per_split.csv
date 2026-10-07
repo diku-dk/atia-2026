@@ -1,7 +1,0 @@
-class,split,n_sessions
-Crop,test,288
-Crop,train,415
-Crop,val,296
-Weed,test,459
-Weed,train,816
-Weed,val,479

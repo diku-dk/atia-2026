@@ -5,10 +5,9 @@
 # Portions of this file are adapted from PyTorch Lightning,
 # used under the Apache 2.0 License.
 #
-# Copied from tue-mps/eomt@7bd19dd (main.py). Changes: imports made package-relative; `fit` no longer
-# uploads the code to W&B (`log_code`, which needed gitignore_parser) and reads `compile_disabled`
-# also when the CLI is built with `run=False` (no subcommand); `cli_main` passes extra LightningCLI kwargs
-# (`args`, `run`) through and returns the CLI, so src/eomt/{trainer,evaluator}.py reuse these defaults.
+# Copied from tue-mps/eomt@7bd19dd (main.py). Changes: imports made package-relative (datasets/ lives in
+# src/datasets/); `fit` no longer uploads the code to W&B (`log_code`, which needs gitignore_parser).
+# Run as upstream's main.py: `python -m src.eomt.cli fit|validate -c <config> --key=value ...`.
 # ---------------------------------------------------------------
 
 
@@ -23,7 +22,7 @@ from lightning.pytorch.loops.training_epoch_loop import _TrainingEpochLoop
 from lightning.pytorch.loops.fetchers import _DataFetcher, _DataLoaderIterDataFetcher
 
 from .training.lightning_module import LightningModule
-from .datasets.lightning_data_module import LightningDataModule
+from src.datasets.lightning_data_module import LightningDataModule
 
 # Suppress PyTorch FX warnings for DINOv3 models
 import os
@@ -148,16 +147,14 @@ class LightningCLI(cli.LightningCLI):
             _should_check_val_fx, self.trainer.fit_loop.epoch_loop
         )
 
-        subcommand = self.config.get("subcommand")
-        config = self.config[subcommand] if subcommand else self.config
-        if not config["compile_disabled"]:
+        if not self.config[self.config["subcommand"]]["compile_disabled"]:
             model = torch.compile(model)
 
         self.trainer.fit(model, **kwargs)
 
 
-def cli_main(**kwargs):
-    return LightningCLI(
+def cli_main():
+    LightningCLI(
         LightningModule,
         LightningDataModule,
         subclass_mode_model=True,
@@ -175,7 +172,6 @@ def cli_main(**kwargs):
             "gradient_clip_val": 0.01,
             "gradient_clip_algorithm": "norm",
         },
-        **kwargs,
     )
 
 

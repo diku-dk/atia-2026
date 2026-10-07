@@ -1,4 +1,5 @@
 albumentations==2.0.8
+faster-coco-eval==1.8.0
 hotcoco==1.0.1
 jsonargparse[signatures]==4.52.0
 lightning==2.6.6

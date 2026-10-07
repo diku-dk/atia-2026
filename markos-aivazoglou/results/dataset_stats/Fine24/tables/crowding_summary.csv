@@ -1,4 +1,0 @@
-split,total_pairs_iou_gt0,total_pairs_iou_gt0.5,median_of_median_nn_dist,total_boxes
-test,1979,0,244.67626464139911,11718
-val,1701,1,240.90697381360653,11727
-train,8454,1,232.33406875946213,54843

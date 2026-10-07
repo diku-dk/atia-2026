@@ -1,0 +1,37 @@
+{
+  "variant": "CropOrWeed2",
+  "n_images": 7705,
+  "n_instances": 78288,
+  "n_classes": 2,
+  "median_instances_per_image_train": 6.0,
+  "mean_instances_per_image_train": 10.15061133753242,
+  "size_bucket_pct": {
+    "tiny": 4.55,
+    "small": 32.91,
+    "medium": 38.94,
+    "large": 23.6
+  },
+  "pct_tiny_at_imgsz640": 54.46,
+  "rarest_classes": [
+    {
+      "class": "Crop",
+      "n_instances": 14530
+    },
+    {
+      "class": "Weed",
+      "n_instances": 40263
+    }
+  ],
+  "verification_errors": [],
+  "flagged_low_session_classes": [],
+  "js_divergence_size_bucket": [
+    {
+      "split": "val",
+      "js_divergence_size_bucket_vs_train": 0.000188819900134367
+    },
+    {
+      "split": "test",
+      "js_divergence_size_bucket_vs_train": 0.0007148953210384633
+    }
+  ]
+}

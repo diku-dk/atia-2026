@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Descriptive statistics for the converted CropAndWeed YOLO instance-segmentation datasets.
+"""Descriptive statistics for the converted CropOrWeed2 instance-segmentation dataset.
 
-Reads ``<data>/<Variant>/yolo/segmentation/labels/{train,val,test}/`` (``--data``,
-default ``data/seed42``) for each requested variant and writes tables + figures under
-``results/dataset_stats/<Variant>/``:
+Reads the COCO ground truth ``<data>/annotations/{train,val,test}.json`` (``--data``, default
+``data/seed42``; non-crowd instances only) and writes tables + figures under ``results/dataset_stats/``:
 
-    results/dataset_stats/<Variant>/
+    results/dataset_stats/
       figures/*.png (and *.pdf if requested)
       tables/*.csv
       summary.json
@@ -14,9 +13,9 @@ default ``data/seed42``) for each requested variant and writes tables + figures 
 Usage::
 
     uv run scripts/dataset_stats.py [--data data/seed42] [--out results/dataset_stats]
-        [--variants CropOrWeed2 Fine24] [--imgsz 640 1024 1280] [--format png pdf]
+        [--imgsz 640 1024 1280] [--format png pdf]
 
-Each instance is one polygon (``src/seg_dataset.py``): its bbox is the
+Each instance is one polygon (``scripts/convert_cropandweed.py``): its bbox is the
 polygon's bounds (``bbox_area = w * h``) and ``mask_area`` its polygon area,
 so both are approximations of the original annotation box and mask.
 """
@@ -38,9 +37,7 @@ import seaborn as sns
 from PIL import Image
 from tqdm import tqdm
 
-# `uv run scripts/dataset_stats.py` puts scripts/ (not the project root) on sys.path.
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from src.seg_dataset import read_names, read_split  # noqa: E402
+VARIANT = "CropOrWeed2"
 
 # ---------------------------------------------------------------------------
 # Plotting conventions (dataviz skill: fixed categorical order, one hue for
@@ -144,66 +141,49 @@ def cnw_session_of(stem: str) -> str:
         return session_of(stem)
 
 
-def get_class_names(cnw_dir: Path, variant: str, fallback: list[str]) -> list[str]:
-    try:
-        names = get_cnw_module().load_class_names(cnw_dir, variant)
-        if names:
-            return names
-    except Exception as exc:
-        print(f"[warn] load_class_names failed for {variant}: {exc}")
-    return fallback
-
-
-def get_class_colors(cnw_dir: Path, variant: str, n: int) -> list[str]:
-    """Return per-class colours as hex strings (index == class id)."""
-    try:
-        bgr = get_cnw_module().load_class_colors(cnw_dir, variant, n)
-        return [f"#{r:02x}{g:02x}{b:02x}" for (b, g, r) in bgr]
-    except Exception as exc:
-        print(f"[warn] load_class_colors failed: {exc}")
-        # Fallback: evenly spaced hues via matplotlib's hsv colormap.
-        cmap = plt.get_cmap("hsv")
-        return [matplotlib.colors.to_hex(cmap(i / max(n, 1))) for i in range(n)]
-
-
 # ---------------------------------------------------------------------------
 # Loading
 # ---------------------------------------------------------------------------
 
-def load_variant(data_dir: Path, variant: str) -> tuple[pl.DataFrame, pl.DataFrame, list[str]]:
-    """Load all 3 splits' YOLO seg labels into one instance-level DataFrame
-    and one image-level DataFrame.
+def load_dataset(data_dir: Path) -> tuple[pl.DataFrame, pl.DataFrame, list[str]]:
+    """Load all 3 splits' COCO ground truth (non-crowd instances) into one instance-level
+    DataFrame and one image-level DataFrame.
 
-    Returns (instances_df, images_df, class_names). Each instance's bbox is
-    its polygon's bounds and its mask_area the polygon area
-    (``src/seg_dataset.py``), since the labels hold one polygon per instance.
+    Returns (instances_df, images_df, class_names).
     """
-    dataset_dir = data_dir / variant / "yolo" / "segmentation"
-    class_names = read_names(dataset_dir)
     rows = []
     img_rows = []
+    class_names = None
 
     for split in SPLIT_ORDER:
-        for image_id, im in enumerate(tqdm(read_split(dataset_dir, split), desc=f"{variant}/{split}", leave=False)):
-            stem = im["stem"]
+        coco = json.loads((data_dir / "annotations" / f"{split}.json").read_text())
+        class_names = [c["name"] for c in sorted(coco["categories"], key=lambda c: c["id"])]
+        anns_by_image: dict[int, list[dict]] = {}
+        for ann in coco["annotations"]:
+            if not ann["iscrowd"]:
+                anns_by_image.setdefault(ann["image_id"], []).append(ann)
+        for im in tqdm(sorted(coco["images"], key=lambda im: im["file_name"]), desc=split, leave=False):
+            image_id = im["id"]
+            stem = Path(im["file_name"]).stem
+            anns = anns_by_image.get(image_id, [])
             img_rows.append({
                 "split": split, "image_id": image_id, "stem": stem,
                 "session": cnw_session_of(stem),
                 "width": im["width"], "height": im["height"],
-                "n_instances": len(im["instances"]),
+                "n_instances": len(anns),
             })
-            for inst in im["instances"]:
-                x, y, w, h = inst["bbox"]
+            for ann in anns:
+                x, y, w, h = ann["bbox"]
                 rows.append({
                     "split": split,
                     "image_id": image_id,
                     "stem": stem,
                     "session": cnw_session_of(stem),
-                    "class_id": inst["cls"],
-                    "class": class_names[inst["cls"]],
+                    "class_id": ann["category_id"],
+                    "class": class_names[ann["category_id"]],
                     "x": x, "y": y, "w": w, "h": h,
                     "bbox_area": w * h,
-                    "mask_area": inst["area"],
+                    "mask_area": ann["area"],
                     "img_width": im["width"],
                     "img_height": im["height"],
                 })
@@ -262,37 +242,36 @@ def verify(instances: pl.DataFrame, images: pl.DataFrame, variant: str, splits_d
         if n_actual != n_expected:
             errors.append(f"[{variant}] split={split}: {n_actual} images in labels vs {n_expected} in {split_file.name}")
 
-    # 2. Fine24 per-class split % within 0.1 of <data>/splits/report.txt.
-    if variant == "Fine24":
-        report_path = splits_dir / "report.txt"
-        report_pct = parse_report_txt(report_path)
-        totals_per_class = instances.group_by("class").agg(pl.len().alias("total"))
-        totals_map = dict(zip(totals_per_class["class"].to_list(), totals_per_class["total"].to_list()))
-        for split in SPLIT_ORDER:
-            per_split = instances.filter(pl.col("split") == split).group_by("class").agg(pl.len().alias("n"))
-            per_split_map = dict(zip(per_split["class"].to_list(), per_split["n"].to_list()))
-            for cls, (train_pct, val_pct, test_pct, total_n) in report_pct.items():
-                expected_pct = {"train": train_pct, "val": val_pct, "test": test_pct}[split]
-                total = totals_map.get(cls, 0)
-                actual_n = per_split_map.get(cls, 0)
-                actual_pct = 100.0 * actual_n / total if total else 0.0
-                if abs(actual_pct - expected_pct) > 0.1:
-                    errors.append(
-                        f"[{variant}] class={cls} split={split}: {actual_pct:.2f}% vs report.txt {expected_pct:.2f}%"
-                    )
-                if total != total_n:
-                    errors.append(f"[{variant}] class={cls}: total n {total} vs report.txt {total_n}")
+    # 2. per-class split % within 0.1 of <data>/splits/report.txt.
+    report_path = splits_dir / "report.txt"
+    report_pct = parse_report_txt(report_path)
+    totals_per_class = instances.group_by("class").agg(pl.len().alias("total"))
+    totals_map = dict(zip(totals_per_class["class"].to_list(), totals_per_class["total"].to_list()))
+    for split in SPLIT_ORDER:
+        per_split = instances.filter(pl.col("split") == split).group_by("class").agg(pl.len().alias("n"))
+        per_split_map = dict(zip(per_split["class"].to_list(), per_split["n"].to_list()))
+        for cls, (train_pct, val_pct, test_pct, total_n) in report_pct.items():
+            expected_pct = {"train": train_pct, "val": val_pct, "test": test_pct}[split]
+            total = totals_map.get(cls, 0)
+            actual_n = per_split_map.get(cls, 0)
+            actual_pct = 100.0 * actual_n / total if total else 0.0
+            if abs(actual_pct - expected_pct) > 0.1:
+                errors.append(
+                    f"[{variant}] class={cls} split={split}: {actual_pct:.2f}% vs report.txt {expected_pct:.2f}%"
+                )
+            if total != total_n:
+                errors.append(f"[{variant}] class={cls}: total n {total} vs report.txt {total_n}")
 
     return errors
 
 
 def parse_report_txt(path: Path) -> dict:
-    """Parse the 'Fine24 class ... train % val % test % total n' table."""
+    """Parse the 'class ... train % val % test % total n' table."""
     out = {}
     lines = path.read_text().splitlines()
     started = False
     for line in lines:
-        if line.strip().startswith("Fine24 class"):
+        if line.split()[:1] == ["class"]:
             started = True
             continue
         if not started:
@@ -343,7 +322,7 @@ def stat_resolution(images: pl.DataFrame, data_dir: Path, out_dir: Path, formats
     mismatches = 0
     checked = 0
     for row in images.iter_rows(named=True):
-        img_path = data_dir / "images" / f"{row['stem']}.jpg"
+        img_path = data_dir / "images" / row["split"] / f"{row['stem']}.jpg"
         if not img_path.exists():
             continue
         with Image.open(img_path) as im:
@@ -805,41 +784,6 @@ def stat_crowding(instances: pl.DataFrame, out_dir: Path, formats: list[str], va
     save_fig(fig, out_dir, "crowding_nn_distance", formats)
 
 
-# --- 12. Class co-occurrence matrix (Fine24 only) ---------------------------
-
-def stat_cooccurrence(instances: pl.DataFrame, class_names: list[str], out_dir: Path, formats: list[str], variant: str):
-    n = len(class_names)
-    idx = {c: i for i, c in enumerate(class_names)}
-    mat = np.zeros((n, n), dtype=int)
-    for (split, image_id), sub in instances.group_by(["split", "image_id"]):
-        classes_present = sorted(set(sub["class"].to_list()))
-        ids = [idx[c] for c in classes_present]
-        for i in ids:
-            for j in ids:
-                mat[i, j] += 1
-
-    table_rows = []
-    for i in range(n):
-        for j in range(n):
-            if mat[i, j] > 0:
-                table_rows.append({"class_a": class_names[i], "class_b": class_names[j], "n_images_cooccur": int(mat[i, j])})
-    save_table(pl.DataFrame(table_rows), out_dir, "class_cooccurrence")
-
-    cmap = matplotlib.colors.LinearSegmentedColormap.from_list("seq_blue", SEQUENTIAL_BLUE)
-    fig, ax = plt.subplots(figsize=(max(8, 0.4 * n), max(7, 0.4 * n)))
-    mat_display = mat.astype(float).copy()
-    np.fill_diagonal(mat_display, np.nan)
-    im = ax.imshow(mat_display, cmap=cmap)
-    ax.set_xticks(range(n))
-    ax.set_xticklabels(class_names, rotation=90, fontsize=7)
-    ax.set_yticks(range(n))
-    ax.set_yticklabels(class_names, fontsize=7)
-    fig.colorbar(im, ax=ax, shrink=0.8, label="# images co-occurring")
-    ax.set_title(f"{variant}: class co-occurrence (image level, diagonal masked)")
-    ax.grid(False)
-    save_fig(fig, out_dir, "class_cooccurrence", formats)
-
-
 # --- 13. Split representativeness -------------------------------------------
 
 def js_divergence(p: np.ndarray, q: np.ndarray) -> float:
@@ -1073,23 +1017,22 @@ def write_summary_md(summary: dict, out_dir: Path):
 # Main
 # ---------------------------------------------------------------------------
 
-def run_variant(variant: str, data_dir: Path, out_root: Path, cnw_dir: Path,
-                 imgsz_list: list[int], formats: list[str], splits_dir: Path) -> dict:
-    out_dir = out_root / variant
+def run(data_dir: Path, out_dir: Path, imgsz_list: list[int], formats: list[str]) -> dict:
+    variant = VARIANT
+    splits_dir = data_dir / "splits"
     (out_dir / "figures").mkdir(parents=True, exist_ok=True)
     (out_dir / "tables").mkdir(parents=True, exist_ok=True)
 
-    print(f"\n=== {variant} ===")
-    instances, images, class_names = load_variant(data_dir, variant)
+    instances, images, class_names = load_dataset(data_dir)
     print(f"loaded {images.height} images, {instances.height} instances, {len(class_names)} classes")
 
     errors = verify(instances, images, variant, splits_dir)
     if errors:
-        print(f"[ASSERTION FAILURES for {variant}]")
+        print("[ASSERTION FAILURES]")
         for e in errors:
             print(" -", e)
     else:
-        print(f"[{variant}] all verification checks passed")
+        print("all verification checks passed")
 
     stat_resolution(images, data_dir, out_dir, formats)
     stat_class_distribution(instances, images, class_names, out_dir, formats, variant)
@@ -1101,8 +1044,6 @@ def run_variant(variant: str, data_dir: Path, out_root: Path, cnw_dir: Path,
     stat_border_truncation(instances, out_dir, formats, variant)
     stat_fill_ratio(instances, out_dir, formats, variant)
     stat_crowding(instances, out_dir, formats, variant)
-    if len(class_names) > 2:
-        stat_cooccurrence(instances, class_names, out_dir, formats, variant)
     rep = stat_split_representativeness(instances, images, variant, splits_dir, out_dir, formats)
     stat_count_vs_size(instances, out_dir, formats, variant)
 
@@ -1120,28 +1061,19 @@ def run_variant(variant: str, data_dir: Path, out_root: Path, cnw_dir: Path,
 
 
 def main():
-    script_dir = Path(__file__).resolve().parent
-    project_root = script_dir.parent
+    project_root = Path(__file__).resolve().parent.parent
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", type=Path, default=project_root / "data" / "seed42")
     ap.add_argument("--out", type=Path, default=project_root / "results" / "dataset_stats")
-    ap.add_argument("--variants", nargs="+", default=["CropOrWeed2", "Fine24"])
     ap.add_argument("--imgsz", nargs="+", type=int, default=[640, 1024, 1280])
     ap.add_argument("--format", nargs="+", default=["png"], choices=["png", "pdf"])
-    ap.add_argument("--cnw", type=Path, default=Path("/data/cropandweed-dataset"))
     args = ap.parse_args()
 
-    splits_dir = args.data / "splits"
-    all_summaries = {}
-    for variant in args.variants:
-        summary = run_variant(variant, args.data, args.out, args.cnw, args.imgsz, args.format, splits_dir)
-        all_summaries[variant] = summary
-
-    any_errors = any(s["verification_errors"] for s in all_summaries.values())
-    if any_errors:
-        print("\n[FAIL] some verification checks failed; see per-variant output above.")
+    summary = run(args.data, args.out, args.imgsz, args.format)
+    if summary["verification_errors"]:
+        print("\n[FAIL] some verification checks failed; see the output above.")
         sys.exit(1)
-    print("\n[OK] all variants processed, all verification checks passed.")
+    print("\n[OK] all verification checks passed.")
 
 
 if __name__ == "__main__":

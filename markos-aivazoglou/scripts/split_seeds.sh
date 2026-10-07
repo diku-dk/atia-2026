@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Build the CropAndWeed YOLO-seg conversion once per split seed, into data/seed<N>/.
-# Seed 42 is the default dataset (src/registry.py:DATA_ROOT); 0 and 1 add split variability.
+# Build the CropOrWeed2 conversion (YOLO-seg labels + COCO ground truth) once per split seed, into data/seed<N>/.
+# Seed 42 is the default dataset; 0 and 1 add split variability (src/datasets/splits.py:SPLIT_SEEDS).
 # Extra args go to every run, e.g. `scripts/split_seeds.sh --no-preview`. WORKERS=<n> sets the pool size.
 set -euo pipefail
 cd "$(dirname "$0")/.."

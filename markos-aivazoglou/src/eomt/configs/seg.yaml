@@ -7,9 +7,11 @@
 # Everything else keeps upstream's defaults (src/eomt/cli.py trainer_defaults: 16-mixed, grad clip 0.01,
 # torch.compile; MaskClassificationInstance and Transforms defaults: flip, pad + crop), except the scale
 # jitter (data.init_args.scale_range, below).
-# Filled in by src/eomt/trainer.py, don't set them here: data.init_args.path and num_classes (from the
-# variant), model.init_args.ckpt_path (from `pretrained`), trainer.devices (from --device), the checkpoint
-# callback and the logger.
+# Run with upstream's CLI (src/eomt/cli.py), e.g. `python -m src.eomt.cli fit -c src/eomt/configs/seg.yaml`
+# (commands in docs/eomt.md; src/experiments.py builds the same ones). Passed as flags, not set here:
+# data.init_args.path (data/seed<N>) and num_classes, model.init_args.ckpt_path (upstream's COCO-panoptic
+# EoMT-S weights from the HF hub, or the checkpoint to evaluate), trainer.devices, the checkpoint callback
+# and the W&B logger.
 seed_everything: 42
 trainer:
   max_epochs: 50
@@ -25,20 +27,25 @@ trainer:
     # Upstream's (tqdm) progress bar: with `rich` installed (it is here, not upstream) Lightning picks
     # RichProgressBar, which shows nothing in the log files the runner writes.
     - class_path: lightning.pytorch.callbacks.TQDMProgressBar
+    # Predictions next to the ground truth of the 2 val frames with the most plants, logged to the W&B run
+    # after every validation (a no-op without the W&B logger).
+    - class_path: src.eomt.callbacks.PredictionPlotter
 model:
-  # Upstream's MaskClassificationInstance with its validation mask mAP computed on the GPU
-  # (src/eomt/metrics.py): torchmetrics' numbers without its per-mask CPU RLE work.
-  class_path: src.eomt.instance.GpuMapInstance
+  class_path: src.eomt.training.mask_classification_instance.MaskClassificationInstance
   init_args:
     attn_mask_annealing_enabled: true
     lr: 2.0e-4
     llrd_l2_enabled: false
     # Upstream DINOv3 checkpoints are deltas w.r.t. the DINOv3 weights.
     delta_weights: true
-    # COCO's 133 panoptic classes -> class head re-initialised for the variant's classes.
+    # COCO's 133 panoptic classes -> class head re-initialised for our classes.
     load_ckpt_class_head: false
     # warmup_steps: the module's default [500, 1000] (non-ViT, ViT); upstream's COCO [2000, 3000] would be
     # ~30% of a 50-epoch run here (~340 steps/epoch at batch 16).
+    # The mAP (src/eomt/mask_ap.py, CropAndWeed protocol; val, picking best.ckpt, and the test eval's
+    # framework metric) on native-resolution masks; e.g. 0.5 scores masks downscaled to 960x544 per frame
+    # (its area ranges scaled to match). The hotcoco score of predictions.json is always native.
+    metric_mask_scale: 1.0
     network:
       class_path: src.eomt.models.eomt.EoMT
       init_args:
@@ -49,17 +56,13 @@ model:
           init_args:
             backbone_name: facebook/dinov3-vits16-pretrain-lvd1689m
 data:
-  class_path: src.eomt.datasets.cropandweed_instance.CropAndWeedInstance
+  class_path: src.datasets.cropandweed_instance.CropAndWeedInstance
   init_args:
-    img_size: [640, 640] # whole frame (1920x1088) scale-jittered/letterboxed into it; eval: resized to fit + padded
-    batch_size: 16 # total, split across GPUs (upstream: devices x batch_size = 16)
+    img_size: [1280, 1280] # whole frame (1920x1088) scale-jittered/letterboxed into it; eval: resized to fit + padded
+    batch_size: 8 # per GPU, as upstream (devices x batch_size = 16)
     # Scale jitter relative to the eval scale (the frame fit into img_size), as YOLO's `scale: 0.5`
     # (0.5-1.5). Upstream's COCO default, 0.1-2.0, shrinks the frame below eval scale in ~half the
     # samples, where most plants (median ~9 px at 640) become too small to learn.
-    scale_range: [0.5, 1.5]
+    # scale_range: [0.8, 1.25]
+    # scale_range: [1.125, 2.25]
     num_workers: 8
-# Not a LightningCLI key: src/eomt/trainer.py downloads it and sets model.init_args.ckpt_path. Upstream's
-# COCO-panoptic EoMT-S (DINOv3), the counterpart of YOLO's COCO-pretrained yolo26m-seg.pt.
-pretrained:
-  repo_id: tue-mps/coco_panoptic_eomt_small_640_dinov3
-  filename: pytorch_model.bin

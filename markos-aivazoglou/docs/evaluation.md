@@ -1,0 +1,17 @@
+# Evaluation
+
+Each run is evaluated with its framework's own evaluation; `src/experiments.py` runs it per cell on `test`, at native resolution, at the experiment's `eval` batch (the largest that fits one 96 GB GPU: YOLO 64; EoMT 16, or 4 frames = 32 tiles for `eomt-native-1024`). The reported `latency_ms` is therefore the per-image time at that batch, not single-image latency; a batch-1 latency measurement is to be added separately:
+- YOLO: `YOLO(best.pt).val(data=..., split="test", save_json=True, **eval)`, everything else at Ultralytics' defaults. The runner keeps the mask entries of `results_dict` (`...(M)`), the per-image `speed` (preprocess / inference / postprocess), and the predictions from `predictions.json`. For non-COCO data Ultralytics writes `image_id` = file stem and `category_id` = cls + 1, and no file at all when nothing was detected.
+- EoMT: upstream's `validate` (docs/eomt.md) with `src/eomt/callbacks.py:CocoPredictionWriter`.
+  - Masked attention is off (as in upstream's README), with the top 300 predictions per image (= YOLO's `max_det`).
+  - The framework metrics are upstream's logged `metrics/val_ap_*`, from `src/eomt/mask_ap.py:MaskAP` (the final block's masks at native resolution under this protocol, IoU on the GPU), which reproduce the hotcoco score (checked on smoke test evals; the ground truth's bbox comes from its rasterised mask instead of its polygon).
+  - The latency is a single per-image total (preprocess + forward + postprocess, CUDA-synced, metric update excluded).
+
+Only masks are scored; box metrics are dropped everywhere. Framework output goes to `output/experiments/<cell>/eval/`.
+
+**CropAndWeed protocol (the comparable numbers).** Ultralytics' own metrics count detections of unlabelled Vegetation plants (~30% of plants) as false positives, which the paper does not. So each run's predictions (COCO results with `stem` and 0-based `category_id`) are scored by `src/cropandweed_eval.py` with **hotcoco** (the project's COCO eval backend; keep it) against the split's COCO ground truth, `data/seed<N>/annotations/test.json`. The result goes to the cell's `cropandweed.csv`, one row per IoU type (`segm` only from the runner; the tests score toy `bbox` predictions), with the 12 COCO summary metrics and per-class AP. The rules (paper, Sec. 5.1):
+- **Vegetation:** the converter writes each Vegetation box into the val/test json as an `iscrowd=1` annotation, once per category (COCO matches per category). Plain COCO matching then treats predictions mostly inside it as neither TP nor FP. Because it lives in the ground truth, EoMT's own validation mAP (torchmetrics, which reads `iscrowd`) ignores Vegetation too; Ultralytics' metrics do not.
+- **Minimum size:** only objects > 16² px **bbox** area are scored (GT `area` is set to bbox `w*h` at load time; `loadRes` sets the predictions' to theirs).
+- **Size buckets** are the paper's: small 16²–32², medium 32²–128², large > 128² (hotcoco's own default medium/large split is 96², so it is set explicitly).
+
+Scoring is per class only (no class-agnostic option), with `maxDets=[1, 10, 300]` (some test images have > 100 labelled plants). hotcoco warns about these non-default `maxDets`/area ranges on purpose. The plain-COCO reference protocol was dropped on 2026-10-06; the frameworks' own metrics in `summary.json` serve as the reference. Tests: `uv run -m unittest tests.test_cropandweed_eval` (and `tests.test_eomt_data` for the EoMT dataset and prediction conversion).

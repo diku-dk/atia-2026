@@ -1,40 +1,99 @@
-# Experiments run by src/experiments.py, each on every split seed x dataset variant.
+# Experiments run by src/experiments.py, each on every split seed (CropOrWeed2).
 #
-#   setup: registered "<framework>-<task>" (src/registry.py).
-#   train: overrides of the setup's default config (src/yolo/configs/seg.yaml, src/eomt/configs/seg.yaml). Every experiment
+#   setup: yolo-seg or eomt-seg.
+#   train: overrides of the setup's config (src/yolo/configs/seg.yaml, src/eomt/configs/seg.yaml), passed to
+#          its CLI (Ultralytics args, dotted LightningCLI keys). Every experiment
 #          trains a fixed 50 epochs (the LR schedule and close_mosaic scale with it), so all get
-#          the same budget; with yolo26m-seg, 100 epochs took ~2.6 h per ft-1280 cell and were
-#          still improving by only ~0.01 mask mAP50-95 per 10 epochs.
-#   eval:  args for the framework's own evaluation (Ultralytics val(), EoMT validate()); `batch: 1` is always
-#          added so the reported speed is single-image latency.
+#          the same budget; with yolo26m-seg, 100 epochs took ~2.6 h per 1280 cell (the old square
+#          ft-1280) and were still improving by only ~0.01 mask mAP50-95 per 10 epochs.
+#   eval:  args for the framework's own evaluation (Ultralytics val(), EoMT's validate) on test, at native
+#          resolution, at the largest batch that fits one 96 GB GPU (batch / val_batch_size; peak memory measured
+#          2026-10-07). latency_ms is then the per-image time at that batch, not single-image latency.
 #
-# Fine-tuning is data-loading bound (decoding + mosaicking 1920x1088 JPEGs), so the train
-# configs cache images in RAM (decoded once, stored resized to imgsz; ~14 GB at 1280, ~3.5 GB at
-# 640, per GPU process under DDP) and use 12 workers per GPU process. At 1280 with 12 workers,
-# DDP on both GPUs peaked at ~33-37 GB RSS per GPU process and exhausted the machine's 112 GB,
-# so earlyoom (SIGTERM below 10% free RAM) killed it; ft-1280 therefore uses 4 workers (min
-# 15.5 GB available over a full-data epoch).
+# Fine-tuning is data-loading bound (decoding + mosaicking 1920x1088 JPEGs), so the YOLO train
+# configs cache images in RAM (decoded once, stored resized to imgsz; ~14 GB at 1280, ~9 GB at 1024,
+# per GPU process under DDP). At 1280 with 12 workers per GPU process, DDP on both GPUs peaked at
+# ~33-37 GB RSS per GPU process and exhausted the machine's 112 GB, so earlyoom (SIGTERM below 10% free
+# RAM) killed it; with 4 workers the minimum was 15.5 GB available over a full-data epoch, so both YOLO
+# cells use 4.
 
-ft-1280:
+# Downsampling regimes: the whole 1920x1088 frame downscaled to 1024 or 1280 wide, i.e. 1024x580 /
+# 1280x725, rounded up to the rectangles 1024x592 / 1280x736 (multiples of EoMT's 16 px patch).
+#
+# YOLO: Ultralytics trains only at a square integer imgsz (its rectangular `rect=True` mode disables mosaic
+# and shuffling), so it trains at imgsz 1024 / 1280 with mosaic: the frame is downscaled exactly as in the
+# rectangle, only the canvas is square. val() batches rectangles itself (stride 32, padded): 1024x608 /
+# 1280x768. batch 48 at 1024 is ~128 x (640/1024)^2 (seg.yaml's 128 at 640), a multiple of the 2 GPUs.
+yolo-1024x592:
   setup: yolo-seg
-  train: { epochs: 50, imgsz: 1280, crop_size: null, batch: 32, cache: ram, workers: 4 } # whole frame letterboxed to 1280, stock trainer
-  eval: { imgsz: 1280 }
+  train: { epochs: 50, imgsz: 1024, batch: 48, cache: ram, workers: 4 }
+  eval: { imgsz: 1024, batch: 64 }
 
-ft-640:
+yolo-1280x736:
   setup: yolo-seg
-  train: { epochs: 50, imgsz: 640, crop_size: null, cache: ram, workers: 12 } # whole frame letterboxed to 640, stock trainer; batch 128 as in seg.yaml
-  eval: { imgsz: 640 }
+  train: { epochs: 50, imgsz: 1280, batch: 32, cache: ram, workers: 4 }
+  eval: { imgsz: 1280, batch: 64 } # 46 GB; batch 32/64/128 all take ~100 s
 
 # EoMT-S (DINOv3 ViT-S/16, COCO-panoptic init; src/eomt/configs/seg.yaml), the same 50-epoch budget and
-# input sizes as ft-640/ft-1280: the whole frame scale-jittered into / letterboxed to img_size. Its
-# LightningCLI config is nested, so train overrides are dotted keys. eval: the image size comes from the
-# run's own config.yaml (like YOLO's imgsz from best.pt); predictions keep the top 300 per image.
-eomt-640:
+# downsampling regimes as the YOLO cells, as rectangular img_size [h, w]: the whole frame scale-jittered
+# into (seg.yaml's scale_range, relative to the frame fit into img_size) / resized to fit img_size. Its
+# LightningCLI config is nested, so train/eval overrides are dotted keys (passed as LightningCLI flags).
+# eval: the training img_size (as YOLO's eval imgsz); predictions keep the top 300 per image. batch_size
+# is per GPU (upstream's meaning): 8 x 2 GPUs (--device both) = 16, as upstream. val_batch_size (per GPU) is the
+# largest that fits with margin (peak memory, 2026-10-07): val 32 at 1024x592 (78 GB), 16 at 1280x736 (32: 90
+# GB); test (top 300) 16 for both (75 / 81 GB). The mask mAP (src/eomt/mask_ap.py) runs on the GPU and
+# adds little memory.
+# Validation (which picks best.ckpt) every 5 epochs instead of upstream's 2 (decided 2026-10-03): each
+# one scores the ~1100 val frames at native 1920x1088; epochs 5, 10, ..., 50, so the last
+# epoch is always validated. last.ckpt is saved with each validation, so a crash loses up to 5 epochs.
+eomt-1024x592:
   setup: eomt-seg
-  train: { trainer.max_epochs: 50, data.init_args.img_size: [640, 640] } # total batch 16 as in seg.yaml
-  eval: {}
+  train:
+    trainer.max_epochs: 50
+    trainer.check_val_every_n_epoch: 5
+    data.init_args.img_size: [592, 1024]
+    data.init_args.batch_size: 8
+    data.init_args.val_batch_size: 32
+  eval:
+    data.init_args.img_size: [592, 1024]
+    data.init_args.val_batch_size: 16
 
-eomt-1280:
+eomt-1280x736:
   setup: eomt-seg
-  train: { trainer.max_epochs: 50, data.init_args.img_size: [1280, 1280] }
-  eval: {}
+  train:
+    trainer.max_epochs: 50
+    trainer.check_val_every_n_epoch: 5
+    data.init_args.img_size: [736, 1280]
+    data.init_args.batch_size: 8
+    data.init_args.val_batch_size: 16
+  eval:
+    data.init_args.img_size: [736, 1280]
+    data.init_args.val_batch_size: 16
+
+# Native resolution: trained on random 1024x1024 crops of the frame at native scale (no scale jitter,
+# scale_range null), dropping instances with less than 25% of their mask inside the crop
+# (min_visible_fraction; a crop left with no instance is redrawn, as upstream). Validation (picking best.ckpt)
+# on a fixed 2x2 grid of 1024 tiles per frame (val_tile_size), each scored as its own image, with
+# instances < 25% inside the tile as is_crowd. The test evaluation is on full frames, tiled at native
+# resolution and merged (eval_tile_overlap, src/eomt/training/mask_classification_instance.py): 4x2 tiles
+# of 1024, overlapping by >= 640 px (725 px across = 71% of the tile, 960 px down since 1088 > 1024).
+# 640 px is set by the largest objects: the very largest spans the whole frame (1919 px wide, no tile can
+# hold it), so by the 99th percentile of the longest box side (638 px, seed 42); 99.6% of instances lie
+# whole in some tile (3 columns, 576 px: 99.1%). eval_tile_overlap is also set for training so that
+# PredictionPlotter's full-frame plots use the same tiled inference (the 1024 val tiles fit in one tile).
+eomt-native-1024:
+  setup: eomt-seg
+  train:
+    trainer.max_epochs: 50
+    trainer.check_val_every_n_epoch: 5
+    data.init_args.img_size: [1024, 1024]
+    data.init_args.scale_range: null
+    data.init_args.min_visible_fraction: 0.25
+    data.init_args.val_tile_size: 1024
+    data.init_args.batch_size: 8
+    data.init_args.val_batch_size: 32 # tiles
+    model.init_args.eval_tile_overlap: 640
+  eval:
+    data.init_args.img_size: [1024, 1024]
+    data.init_args.val_batch_size: 4 # frames = 32 tiles of 1024
+    model.init_args.eval_tile_overlap: 640
