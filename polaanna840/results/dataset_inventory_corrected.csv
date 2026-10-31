@@ -1,0 +1,666 @@
+tissue,sample_id,n_nuclei,has_vague_area,vague_pixels,vague_fraction
+human bladder,human_bladder_01,24,True,21987,0.08387374877929688
+human bladder,human_bladder_02,3,True,28,0.0001068115234375
+human bladder,human_bladder_03,25,True,18043,0.06882858276367188
+human bladder,human_bladder_04,128,True,30420,0.1160430908203125
+human bladder,human_bladder_05,29,True,3946,0.01505279541015625
+human bladder,human_bladder_06,18,True,11081,0.042270660400390625
+human bladder,human_bladder_07,40,True,14728,0.056182861328125
+human bladder,human_bladder_08,27,True,8588,0.0327606201171875
+human bladder,human_bladder_09,31,True,12698,0.04843902587890625
+human bladder,human_bladder_10,24,True,98,0.00037384033203125
+human bladder,human_bladder_11,33,True,32,0.0001220703125
+human bladder,human_bladder_12,18,True,4910,0.01873016357421875
+human brain,human_brain_1,5,True,1753,0.006687164306640625
+human brain,human_brain_10,17,True,16615,0.06338119506835938
+human brain,human_brain_11,5,True,90,0.00034332275390625
+human brain,human_brain_12,5,True,17556,0.0669708251953125
+human brain,human_brain_2,2,True,7999,0.030513763427734375
+human brain,human_brain_3,15,True,8185,0.031223297119140625
+human brain,human_brain_4,9,True,43395,0.16553878784179688
+human brain,human_brain_5,6,True,19693,0.07512283325195312
+human brain,human_brain_6,16,True,13965,0.053272247314453125
+human brain,human_brain_7,21,True,11304,0.043121337890625
+human brain,human_brain_8,37,True,4830,0.01842498779296875
+human brain,human_brain_9,8,True,7110,0.02712249755859375
+human cardia,human_cardia_1,29,True,21984,0.0838623046875
+human cardia,human_cardia_10,134,True,28518,0.10878753662109375
+human cardia,human_cardia_11,16,True,90,0.00034332275390625
+human cardia,human_cardia_12,61,True,15142,0.05776214599609375
+human cardia,human_cardia_2,67,True,25782,0.09835052490234375
+human cardia,human_cardia_3,120,True,15236,0.0581207275390625
+human cardia,human_cardia_4,15,True,10985,0.041904449462890625
+human cardia,human_cardia_5,91,True,25180,0.0960540771484375
+human cardia,human_cardia_6,45,True,24514,0.09351348876953125
+human cardia,human_cardia_7,19,True,26668,0.1017303466796875
+human cardia,human_cardia_8,19,True,26315,0.10038375854492188
+human cardia,human_cardia_9,55,True,29360,0.11199951171875
+human cerebellum,human_cerebellum_1,43,True,7493,0.028583526611328125
+human cerebellum,human_cerebellum_10,6,True,7863,0.029994964599609375
+human cerebellum,human_cerebellum_11,90,True,23101,0.08812332153320312
+human cerebellum,human_cerebellum_12,5,True,8144,0.03106689453125
+human cerebellum,human_cerebellum_2,136,True,24522,0.09354400634765625
+human cerebellum,human_cerebellum_3,10,True,15434,0.05887603759765625
+human cerebellum,human_cerebellum_4,7,True,10837,0.041339874267578125
+human cerebellum,human_cerebellum_5,159,True,36280,0.138397216796875
+human cerebellum,human_cerebellum_6,69,True,25918,0.09886932373046875
+human cerebellum,human_cerebellum_7,5,True,9606,0.03664398193359375
+human cerebellum,human_cerebellum_8,12,True,16409,0.06259536743164062
+human cerebellum,human_cerebellum_9,7,True,8817,0.033634185791015625
+human epiglottis,human_epiglottis_1,5,True,199,0.000759124755859375
+human epiglottis,human_epiglottis_10,45,True,45294,0.17278289794921875
+human epiglottis,human_epiglottis_11,5,True,22300,0.0850677490234375
+human epiglottis,human_epiglottis_12,23,True,24145,0.09210586547851562
+human epiglottis,human_epiglottis_2,8,True,10221,0.038990020751953125
+human epiglottis,human_epiglottis_3,29,True,20895,0.07970809936523438
+human epiglottis,human_epiglottis_4,12,True,13773,0.052539825439453125
+human epiglottis,human_epiglottis_5,2,True,75,0.000286102294921875
+human epiglottis,human_epiglottis_6,48,True,19628,0.0748748779296875
+human epiglottis,human_epiglottis_7,14,True,25828,0.0985260009765625
+human epiglottis,human_epiglottis_8,37,True,17392,0.06634521484375
+human jejunum,human_jejunum_01,70,True,18153,0.06924819946289062
+human jejunum,human_jejunum_02,88,True,29742,0.11345672607421875
+human jejunum,human_jejunum_03,107,True,50424,0.192352294921875
+human jejunum,human_jejunum_04,44,True,15387,0.058696746826171875
+human jejunum,human_jejunum_05,53,True,14824,0.056549072265625
+human jejunum,human_jejunum_06,83,True,19917,0.07597732543945312
+human jejunum,human_jejunum_07,94,True,35299,0.13465499877929688
+human jejunum,human_jejunum_08,90,True,32451,0.12379074096679688
+human jejunum,human_jejunum_09,117,True,29609,0.11294937133789062
+human jejunum,human_jejunum_10,128,True,40361,0.15396499633789062
+human kidney,human_kidney_01,100,True,21892,0.0835113525390625
+human kidney,human_kidney_02,84,True,18105,0.06906509399414062
+human kidney,human_kidney_03,82,True,19018,0.07254791259765625
+human kidney,human_kidney_04,86,True,19446,0.07418060302734375
+human kidney,human_kidney_05,138,True,23834,0.09091949462890625
+human kidney,human_kidney_06,110,True,26941,0.10277175903320312
+human kidney,human_kidney_07,112,True,33189,0.12660598754882812
+human kidney,human_kidney_08,144,True,25938,0.09894561767578125
+human kidney,human_kidney_09,155,True,47841,0.18249893188476562
+human kidney,human_kidney_10,121,True,60103,0.22927474975585938
+human kidney,human_kidney_11,90,True,32783,0.12505722045898438
+human liver,human_liver_01,41,True,87,0.000331878662109375
+human liver,human_liver_02,46,True,93,0.000354766845703125
+human liver,human_liver_03,36,True,54,0.00020599365234375
+human liver,human_liver_04,38,True,51,0.000194549560546875
+human liver,human_liver_05,40,True,70,0.00026702880859375
+human liver,human_liver_06,38,True,13005,0.049610137939453125
+human liver,human_liver_07,31,True,9935,0.037899017333984375
+human liver,human_liver_08,34,True,11001,0.041965484619140625
+human liver,human_liver_09,29,True,9079,0.034633636474609375
+human liver,human_liver_10,23,True,15020,0.0572967529296875
+human liver,human_liver_11,34,True,8783,0.033504486083984375
+human liver,human_liver_12,24,True,47805,0.18236160278320312
+human liver,human_liver_13,35,True,21005,0.08012771606445312
+human liver,human_liver_14,37,True,23224,0.088592529296875
+human liver,human_liver_15,61,True,40424,0.154205322265625
+human liver,human_liver_16,38,True,24763,0.09446334838867188
+human liver,human_liver_17,29,True,7917,0.030200958251953125
+human liver,human_liver_18,28,True,21089,0.08044815063476562
+human liver,human_liver_19,32,True,21373,0.08153152465820312
+human liver,human_liver_20,34,True,17421,0.06645584106445312
+human liver,human_liver_21,38,True,15326,0.05846405029296875
+human liver,human_liver_22,36,True,45,0.000171661376953125
+human liver,human_liver_23,36,True,9803,0.037395477294921875
+human liver,human_liver_24,33,True,12507,0.047710418701171875
+human liver,human_liver_25,27,True,2762,0.01053619384765625
+human liver,human_liver_26,38,True,22301,0.08507156372070312
+human liver,human_liver_27,36,True,19193,0.07321548461914062
+human liver,human_liver_28,25,True,13693,0.052234649658203125
+human liver,human_liver_29,14,True,24603,0.09385299682617188
+human liver,human_liver_30,28,True,22905,0.08737564086914062
+human liver,human_liver_31,28,True,22285,0.08501052856445312
+human liver,human_liver_32,31,True,28812,0.1099090576171875
+human liver,human_liver_33,36,True,40988,0.1563568115234375
+human liver,human_liver_34,34,True,23607,0.09005355834960938
+human liver,human_liver_35,37,True,23969,0.09143447875976562
+human liver,human_liver_36,33,True,18475,0.07047653198242188
+human liver,human_liver_37,33,True,16255,0.062007904052734375
+human liver,human_liver_38,65,True,40818,0.15570831298828125
+human liver,human_liver_39,26,True,31274,0.11930084228515625
+human liver,human_liver_40,28,True,37403,0.14268112182617188
+human lung,human_lung_1,35,True,18720,0.0714111328125
+human lung,human_lung_10,2,True,72,0.000274658203125
+human lung,human_lung_11,39,True,25900,0.0988006591796875
+human lung,human_lung_12,35,True,18872,0.071990966796875
+human lung,human_lung_2,13,True,57,0.000217437744140625
+human lung,human_lung_3,47,True,36303,0.13848495483398438
+human lung,human_lung_4,25,True,9615,0.036678314208984375
+human lung,human_lung_6,41,True,22588,0.0861663818359375
+human lung,human_lung_7,40,True,15704,0.059906005859375
+human lung,human_lung_8,18,True,9226,0.03519439697265625
+human lung,human_lung_9,23,True,11449,0.043674468994140625
+human melanoma,human_melanoma_01,64,True,6242,0.02381134033203125
+human melanoma,human_melanoma_02,33,True,77143,0.2942771911621094
+human melanoma,human_melanoma_03,63,True,24310,0.09273529052734375
+human melanoma,human_melanoma_04,45,True,79214,0.30217742919921875
+human melanoma,human_melanoma_05,57,True,10177,0.038822174072265625
+human melanoma,human_melanoma_06,42,True,59650,0.22754669189453125
+human melanoma,human_melanoma_07,41,True,54528,0.2080078125
+human melanoma,human_melanoma_08,64,True,23920,0.09124755859375
+human melanoma,human_melanoma_09,30,True,43563,0.16617965698242188
+human melanoma,human_melanoma_10,43,True,31790,0.12126922607421875
+human melanoma,human_melanoma_11,18,True,42281,0.16128921508789062
+human melanoma,human_melanoma_12,33,True,59588,0.2273101806640625
+human muscle,human_muscle_1,32,True,27209,0.10379409790039062
+human muscle,human_muscle_10,6,True,12523,0.047771453857421875
+human muscle,human_muscle_2,9,True,29458,0.11237335205078125
+human muscle,human_muscle_3,8,True,71,0.000270843505859375
+human muscle,human_muscle_5,12,True,15256,0.058197021484375
+human muscle,human_muscle_6,8,True,22,8.392333984375e-05
+human muscle,human_muscle_7,37,True,18843,0.07188034057617188
+human muscle,human_muscle_8,11,True,18341,0.06996536254882812
+human muscle,human_muscle_9,4,True,11396,0.0434722900390625
+human oesophagus,human_oesophagus_01,19,True,63,0.000240325927734375
+human oesophagus,human_oesophagus_02,59,True,7781,0.029682159423828125
+human oesophagus,human_oesophagus_03,22,True,16086,0.06136322021484375
+human oesophagus,human_oesophagus_04,46,True,7511,0.028652191162109375
+human oesophagus,human_oesophagus_05,34,True,11824,0.04510498046875
+human oesophagus,human_oesophagus_06,21,True,46,0.00017547607421875
+human oesophagus,human_oesophagus_07,73,True,21110,0.08052825927734375
+human oesophagus,human_oesophagus_08,37,True,14656,0.055908203125
+human oesophagus,human_oesophagus_09,25,True,11463,0.043727874755859375
+human oesophagus,human_oesophagus_10,18,True,7359,0.028072357177734375
+human oesophagus,human_oesophagus_11,56,True,14660,0.0559234619140625
+human oesophagus,human_oesophagus_12,14,True,53,0.000202178955078125
+human oesophagus,human_oesophagus_13,41,True,4401,0.016788482666015625
+human oesophagus,human_oesophagus_14,18,True,6095,0.023250579833984375
+human oesophagus,human_oesophagus_15,73,True,34018,0.12976837158203125
+human oesophagus,human_oesophagus_16,13,True,37,0.000141143798828125
+human oesophagus,human_oesophagus_17,46,True,6431,0.024532318115234375
+human oesophagus,human_oesophagus_18,43,True,12533,0.047809600830078125
+human oesophagus,human_oesophagus_20,88,True,30396,0.1159515380859375
+human oesophagus,human_oesophagus_21,54,True,10386,0.03961944580078125
+human oesophagus,human_oesophagus_22,45,True,8394,0.03202056884765625
+human oesophagus,human_oesophagus_23,45,True,11558,0.04409027099609375
+human oesophagus,human_oesophagus_24,24,True,13498,0.05149078369140625
+human oesophagus,human_oesophagus_25,9,True,97,0.000370025634765625
+human oesophagus,human_oesophagus_26,78,True,10513,0.040103912353515625
+human oesophagus,human_oesophagus_27,11,True,70,0.00026702880859375
+human oesophagus,human_oesophagus_28,64,True,14848,0.056640625
+human oesophagus,human_oesophagus_29,50,True,13508,0.0515289306640625
+human oesophagus,human_oesophagus_30,35,True,15212,0.0580291748046875
+human oesophagus,human_oesophagus_31,71,True,10864,0.04144287109375
+human oesophagus,human_oesophagus_32,37,True,49,0.000186920166015625
+human oesophagus,human_oesophagus_33,44,True,14537,0.055454254150390625
+human oesophagus,human_oesophagus_34,81,True,9514,0.03629302978515625
+human oesophagus,human_oesophagus_35,56,True,14553,0.055515289306640625
+human oesophagus,human_oesophagus_36,12,True,47,0.000179290771484375
+human oesophagus,human_oesophagus_37,55,True,30719,0.11718368530273438
+human oesophagus,human_oesophagus_38,32,True,57,0.000217437744140625
+human oesophagus,human_oesophagus_39,46,True,47,0.000179290771484375
+human oesophagus,human_oesophagus_40,17,True,58,0.00022125244140625
+human oesophagus,human_oesophagus_41,44,True,4429,0.016895294189453125
+human oesophagus,human_oesophagus_42,116,True,6682,0.02548980712890625
+human oesophagus,human_oesophagus_43,49,True,10253,0.039112091064453125
+human oesophagus,human_oesophagus_44,39,True,5518,0.02104949951171875
+human oesophagus,human_oesophagus_45,33,True,14764,0.0563201904296875
+human oesophagus,human_oesophagus_46,79,True,32032,0.1221923828125
+human oesophagus,human_oesophagus_47,57,True,17530,0.06687164306640625
+human oesophagus,human_oesophagus_48,17,True,71,0.000270843505859375
+human pancreas,human_pancreas_01,62,True,10342,0.03945159912109375
+human pancreas,human_pancreas_02,56,True,17997,0.06865310668945312
+human pancreas,human_pancreas_03,43,True,17818,0.06797027587890625
+human pancreas,human_pancreas_04,28,True,18938,0.07224273681640625
+human pancreas,human_pancreas_05,63,True,20699,0.07896041870117188
+human pancreas,human_pancreas_06,53,True,29195,0.11137008666992188
+human pancreas,human_pancreas_07,53,True,24568,0.093719482421875
+human pancreas,human_pancreas_08,62,True,20930,0.07984161376953125
+human pancreas,human_pancreas_09,67,True,23678,0.09032440185546875
+human pancreas,human_pancreas_10,44,True,10655,0.040645599365234375
+human pancreas,human_pancreas_11,58,True,11343,0.043270111083984375
+human pancreas,human_pancreas_12,49,True,24223,0.09240341186523438
+human pancreas,human_pancreas_13,54,True,11111,0.042385101318359375
+human pancreas,human_pancreas_14,44,True,21000,0.080108642578125
+human pancreas,human_pancreas_15,28,True,40,0.000152587890625
+human pancreas,human_pancreas_16,40,True,12101,0.046161651611328125
+human pancreas,human_pancreas_17,55,True,12985,0.049533843994140625
+human pancreas,human_pancreas_18,63,True,7035,0.026836395263671875
+human pancreas,human_pancreas_19,49,True,34138,0.13022613525390625
+human pancreas,human_pancreas_20,40,True,30288,0.11553955078125
+human pancreas,human_pancreas_21,54,True,13224,0.050445556640625
+human pancreas,human_pancreas_22,38,True,24444,0.0932464599609375
+human pancreas,human_pancreas_23,45,True,9448,0.036041259765625
+human pancreas,human_pancreas_24,62,True,24625,0.09393692016601562
+human pancreas,human_pancreas_25,40,True,12756,0.0486602783203125
+human pancreas,human_pancreas_26,29,True,19963,0.07615280151367188
+human pancreas,human_pancreas_27,47,True,13683,0.052196502685546875
+human pancreas,human_pancreas_28,57,True,21825,0.08325576782226562
+human pancreas,human_pancreas_29,73,True,2866,0.01093292236328125
+human pancreas,human_pancreas_30,65,True,13333,0.050861358642578125
+human pancreas,human_pancreas_31,51,True,17021,0.06492996215820312
+human pancreas,human_pancreas_32,50,True,10874,0.04148101806640625
+human pancreas,human_pancreas_33,65,True,20632,0.078704833984375
+human pancreas,human_pancreas_34,60,True,7402,0.02823638916015625
+human pancreas,human_pancreas_35,56,True,15305,0.058383941650390625
+human pancreas,human_pancreas_36,31,True,9187,0.035045623779296875
+human pancreas,human_pancreas_37,28,True,8494,0.03240203857421875
+human pancreas,human_pancreas_38,45,True,35607,0.13582992553710938
+human pancreas,human_pancreas_39,56,True,12313,0.046970367431640625
+human pancreas,human_pancreas_40,45,True,11605,0.044269561767578125
+human pancreas,human_pancreas_41,41,True,6622,0.02526092529296875
+human pancreas,human_pancreas_42,38,True,4549,0.017353057861328125
+human pancreas,human_pancreas_43,45,True,14199,0.054164886474609375
+human pancreas,human_pancreas_44,46,True,20094,0.07665252685546875
+human peritoneum,human_peritoneum_1,35,True,12985,0.049533843994140625
+human peritoneum,human_peritoneum_10,14,True,16585,0.06326675415039062
+human peritoneum,human_peritoneum_11,49,True,44031,0.16796493530273438
+human peritoneum,human_peritoneum_12,24,True,21916,0.0836029052734375
+human peritoneum,human_peritoneum_2,25,True,24821,0.09468460083007812
+human peritoneum,human_peritoneum_3,71,True,20354,0.07764434814453125
+human peritoneum,human_peritoneum_4,75,True,17303,0.06600570678710938
+human peritoneum,human_peritoneum_5,40,True,39,0.000148773193359375
+human peritoneum,human_peritoneum_6,40,True,17568,0.0670166015625
+human peritoneum,human_peritoneum_7,34,True,22686,0.08654022216796875
+human peritoneum,human_peritoneum_8,31,True,45510,0.17360687255859375
+human peritoneum,human_peritoneum_9,30,True,32664,0.124603271484375
+human placenta,human_placenta_01,58,True,18686,0.07128143310546875
+human placenta,human_placenta_02,37,True,12773,0.048725128173828125
+human placenta,human_placenta_03,29,True,14929,0.056949615478515625
+human placenta,human_placenta_04,57,True,19226,0.07334136962890625
+human placenta,human_placenta_05,49,True,8531,0.032543182373046875
+human placenta,human_placenta_06,66,True,25669,0.09791946411132812
+human placenta,human_placenta_07,30,True,55,0.000209808349609375
+human placenta,human_placenta_08,82,True,11007,0.041988372802734375
+human placenta,human_placenta_09,53,True,100,0.0003814697265625
+human placenta,human_placenta_10,44,True,18074,0.06894683837890625
+human placenta,human_placenta_11,45,True,10984,0.041900634765625
+human placenta,human_placenta_12,70,True,42007,0.16024398803710938
+human placenta,human_placenta_13,69,True,15,5.7220458984375e-05
+human placenta,human_placenta_14,60,True,10002,0.03815460205078125
+human placenta,human_placenta_15,66,True,12493,0.047657012939453125
+human placenta,human_placenta_16,32,True,21945,0.08371353149414062
+human placenta,human_placenta_17,40,True,11741,0.044788360595703125
+human placenta,human_placenta_18,34,True,4753,0.018131256103515625
+human placenta,human_placenta_19,11,True,13,4.9591064453125e-05
+human placenta,human_placenta_20,51,True,19481,0.07431411743164062
+human placenta,human_placenta_21,39,True,8574,0.03270721435546875
+human placenta,human_placenta_22,40,True,15430,0.05886077880859375
+human placenta,human_placenta_23,50,True,12518,0.04775238037109375
+human placenta,human_placenta_24,72,True,20626,0.07868194580078125
+human placenta,human_placenta_25,88,True,8394,0.03202056884765625
+human placenta,human_placenta_26,44,True,11887,0.045345306396484375
+human placenta,human_placenta_27,54,True,12336,0.04705810546875
+human placenta,human_placenta_28,52,True,18314,0.06986236572265625
+human placenta,human_placenta_29,65,True,10834,0.04132843017578125
+human placenta,human_placenta_30,47,True,19321,0.07370376586914062
+human placenta,human_placenta_31,43,True,54,0.00020599365234375
+human placenta,human_placenta_32,72,True,25685,0.09798049926757812
+human placenta,human_placenta_33,44,True,15333,0.058490753173828125
+human placenta,human_placenta_34,5,True,33,0.000125885009765625
+human placenta,human_placenta_35,68,True,6302,0.02404022216796875
+human placenta,human_placenta_36,68,True,17230,0.06572723388671875
+human placenta,human_placenta_37,25,True,38,0.00014495849609375
+human placenta,human_placenta_38,38,True,14213,0.054218292236328125
+human placenta,human_placenta_39,21,True,58,0.00022125244140625
+human placenta,human_placenta_40,48,True,16593,0.06329727172851562
+human pylorus,human_pylorus_1,34,True,45,0.000171661376953125
+human pylorus,human_pylorus_10,60,True,4535,0.017299652099609375
+human pylorus,human_pylorus_11,69,True,10008,0.038177490234375
+human pylorus,human_pylorus_12,29,True,13849,0.052829742431640625
+human pylorus,human_pylorus_2,27,True,82,0.00031280517578125
+human pylorus,human_pylorus_3,32,True,14308,0.0545806884765625
+human pylorus,human_pylorus_4,36,True,7266,0.02771759033203125
+human pylorus,human_pylorus_5,29,True,64,0.000244140625
+human pylorus,human_pylorus_6,28,True,10164,0.0387725830078125
+human pylorus,human_pylorus_7,35,True,42,0.00016021728515625
+human pylorus,human_pylorus_8,26,True,83,0.000316619873046875
+human pylorus,human_pylorus_9,36,True,5917,0.022571563720703125
+human rectum,human_rectum_1,49,True,10779,0.041118621826171875
+human rectum,human_rectum_10,12,True,64,0.000244140625
+human rectum,human_rectum_11,19,True,46,0.00017547607421875
+human rectum,human_rectum_12,21,True,30,0.00011444091796875
+human rectum,human_rectum_2,14,True,61,0.000232696533203125
+human rectum,human_rectum_3,38,True,12710,0.04848480224609375
+human rectum,human_rectum_4,37,True,39,0.000148773193359375
+human rectum,human_rectum_5,43,True,2572,0.0098114013671875
+human rectum,human_rectum_6,17,True,70,0.00026702880859375
+human rectum,human_rectum_7,23,True,12430,0.04741668701171875
+human rectum,human_rectum_8,45,True,69,0.000263214111328125
+human rectum,human_rectum_9,31,True,53,0.000202178955078125
+human salivory gland,human_salivory_01,74,True,15812,0.0603179931640625
+human salivory gland,human_salivory_02,50,True,10129,0.038639068603515625
+human salivory gland,human_salivory_03,82,True,12597,0.048053741455078125
+human salivory gland,human_salivory_04,50,True,9418,0.03592681884765625
+human salivory gland,human_salivory_05,50,True,7092,0.0270538330078125
+human salivory gland,human_salivory_06,48,True,31,0.000118255615234375
+human salivory gland,human_salivory_07,90,True,18366,0.07006072998046875
+human salivory gland,human_salivory_08,79,True,18221,0.06950759887695312
+human salivory gland,human_salivory_09,47,True,89519,0.3414878845214844
+human salivory gland,human_salivory_10,61,True,12156,0.0463714599609375
+human salivory gland,human_salivory_11,67,True,15594,0.05948638916015625
+human salivory gland,human_salivory_12,88,True,20704,0.0789794921875
+human salivory gland,human_salivory_13,63,True,4089,0.015598297119140625
+human salivory gland,human_salivory_14,88,True,14738,0.05622100830078125
+human salivory gland,human_salivory_15,43,True,7193,0.027439117431640625
+human salivory gland,human_salivory_16,43,True,30477,0.11626052856445312
+human salivory gland,human_salivory_17,95,True,12597,0.048053741455078125
+human salivory gland,human_salivory_18,72,True,9399,0.035854339599609375
+human salivory gland,human_salivory_19,79,True,21422,0.08171844482421875
+human salivory gland,human_salivory_20,68,True,27249,0.10394668579101562
+human salivory gland,human_salivory_21,72,True,11518,0.04393768310546875
+human salivory gland,human_salivory_22,63,True,17981,0.06859207153320312
+human salivory gland,human_salivory_23,80,True,25135,0.09588241577148438
+human salivory gland,human_salivory_24,58,True,10355,0.039501190185546875
+human salivory gland,human_salivory_25,73,True,14754,0.05628204345703125
+human salivory gland,human_salivory_26,16,True,38,0.00014495849609375
+human salivory gland,human_salivory_27,66,True,18725,0.07143020629882812
+human salivory gland,human_salivory_28,62,True,8009,0.030551910400390625
+human salivory gland,human_salivory_29,82,True,20774,0.07924652099609375
+human salivory gland,human_salivory_30,78,True,9766,0.03725433349609375
+human salivory gland,human_salivory_31,117,True,28884,0.1101837158203125
+human salivory gland,human_salivory_32,79,True,8462,0.03227996826171875
+human salivory gland,human_salivory_33,89,True,12796,0.0488128662109375
+human salivory gland,human_salivory_34,84,True,7756,0.0295867919921875
+human salivory gland,human_salivory_35,65,True,17958,0.06850433349609375
+human salivory gland,human_salivory_36,78,True,16979,0.06476974487304688
+human salivory gland,human_salivory_37,82,True,7071,0.026973724365234375
+human salivory gland,human_salivory_38,64,True,14691,0.056041717529296875
+human salivory gland,human_salivory_39,76,True,17613,0.06718826293945312
+human salivory gland,human_salivory_40,80,True,14212,0.0542144775390625
+human salivory gland,human_salivory_41,95,True,9045,0.034503936767578125
+human salivory gland,human_salivory_42,75,True,70,0.00026702880859375
+human salivory gland,human_salivory_43,69,True,21982,0.08385467529296875
+human salivory gland,human_salivory_44,89,True,14007,0.053432464599609375
+human spleen,human_spleen_01,44,True,75,0.000286102294921875
+human spleen,human_spleen_02,32,True,82,0.00031280517578125
+human spleen,human_spleen_03,43,True,73,0.000278472900390625
+human spleen,human_spleen_04,9,True,99,0.000377655029296875
+human spleen,human_spleen_05,42,True,11176,0.042633056640625
+human spleen,human_spleen_06,53,True,52,0.0001983642578125
+human spleen,human_spleen_07,40,True,65,0.000247955322265625
+human spleen,human_spleen_08,44,True,23736,0.090545654296875
+human spleen,human_spleen_09,28,True,72,0.000274658203125
+human spleen,human_spleen_10,32,True,6994,0.02667999267578125
+human spleen,human_spleen_11,46,True,8226,0.03137969970703125
+human spleen,human_spleen_12,32,True,107,0.000408172607421875
+human spleen,human_spleen_13,61,True,79,0.000301361083984375
+human spleen,human_spleen_14,69,True,15264,0.0582275390625
+human spleen,human_spleen_15,92,True,17636,0.0672760009765625
+human spleen,human_spleen_16,128,True,18476,0.0704803466796875
+human spleen,human_spleen_17,92,True,11933,0.045520782470703125
+human spleen,human_spleen_18,72,True,22636,0.0863494873046875
+human spleen,human_spleen_19,93,True,22722,0.08667755126953125
+human spleen,human_spleen_20,41,True,31041,0.11841201782226562
+human spleen,human_spleen_21,112,True,12689,0.048404693603515625
+human spleen,human_spleen_22,70,True,108,0.0004119873046875
+human spleen,human_spleen_23,11,True,68,0.0002593994140625
+human spleen,human_spleen_24,45,True,7608,0.029022216796875
+human spleen,human_spleen_25,190,True,83,0.000316619873046875
+human spleen,human_spleen_26,208,True,44,0.0001678466796875
+human spleen,human_spleen_27,179,True,10782,0.04113006591796875
+human spleen,human_spleen_28,192,True,6116,0.0233306884765625
+human spleen,human_spleen_29,211,True,6693,0.025531768798828125
+human spleen,human_spleen_30,211,True,6362,0.02426910400390625
+human spleen,human_spleen_31,174,True,3827,0.014598846435546875
+human spleen,human_spleen_32,207,True,107,0.000408172607421875
+human spleen,human_spleen_33,180,True,38,0.00014495849609375
+human spleen,human_spleen_34,203,True,54,0.00020599365234375
+human testis,human_testis_1,34,True,20454,0.07802581787109375
+human testis,human_testis_10,32,True,64,0.000244140625
+human testis,human_testis_11,16,True,27,0.000102996826171875
+human testis,human_testis_12,23,True,144,0.00054931640625
+human testis,human_testis_2,56,True,10620,0.0405120849609375
+human testis,human_testis_3,36,True,41843,0.15961837768554688
+human testis,human_testis_4,19,True,141,0.000537872314453125
+human testis,human_testis_5,74,True,8838,0.03371429443359375
+human testis,human_testis_6,24,True,77,0.000293731689453125
+human testis,human_testis_7,11,True,62,0.00023651123046875
+human testis,human_testis_8,6,True,60,0.0002288818359375
+human testis,human_testis_9,49,True,72,0.000274658203125
+human tongue,human_tongue_01,22,True,3802,0.01450347900390625
+human tongue,human_tongue_02,15,True,6482,0.02472686767578125
+human tongue,human_tongue_03,15,True,83,0.000316619873046875
+human tongue,human_tongue_04,50,True,37,0.000141143798828125
+human tongue,human_tongue_05,56,True,5221,0.019916534423828125
+human tongue,human_tongue_06,21,True,82,0.00031280517578125
+human tongue,human_tongue_07,31,True,50,0.00019073486328125
+human tongue,human_tongue_08,33,True,10053,0.038349151611328125
+human tongue,human_tongue_09,23,True,8162,0.03113555908203125
+human tongue,human_tongue_10,67,True,25053,0.09556961059570312
+human tongue,human_tongue_11,16,True,8624,0.03289794921875
+human tongue,human_tongue_12,26,True,11927,0.045497894287109375
+human tongue,human_tongue_13,10,True,139,0.000530242919921875
+human tongue,human_tongue_14,17,True,15022,0.05730438232421875
+human tongue,human_tongue_15,51,True,19144,0.073028564453125
+human tongue,human_tongue_16,29,True,10349,0.039478302001953125
+human tongue,human_tongue_17,90,True,44,0.0001678466796875
+human tongue,human_tongue_18,26,True,105,0.000400543212890625
+human tongue,human_tongue_19,57,True,15103,0.057613372802734375
+human tongue,human_tongue_20,49,True,5768,0.022003173828125
+human tongue,human_tongue_21,28,True,7910,0.03017425537109375
+human tongue,human_tongue_22,9,True,71,0.000270843505859375
+human tongue,human_tongue_23,27,True,9269,0.035358428955078125
+human tongue,human_tongue_24,33,True,19480,0.074310302734375
+human tongue,human_tongue_25,78,True,15673,0.059787750244140625
+human tongue,human_tongue_26,17,True,245,0.000934600830078125
+human tongue,human_tongue_27,36,True,166,0.00063323974609375
+human tongue,human_tongue_28,80,True,7551,0.028804779052734375
+human tongue,human_tongue_29,38,True,20010,0.07633209228515625
+human tongue,human_tongue_30,39,True,142,0.00054168701171875
+human tongue,human_tongue_31,54,True,30369,0.11584854125976562
+human tongue,human_tongue_32,18,True,13752,0.052459716796875
+human tongue,human_tongue_33,57,True,18461,0.07042312622070312
+human tongue,human_tongue_34,26,True,158,0.00060272216796875
+human tongue,human_tongue_35,44,True,8953,0.034152984619140625
+human tongue,human_tongue_36,19,True,47,0.000179290771484375
+human tongue,human_tongue_37,18,True,128,0.00048828125
+human tongue,human_tongue_38,37,True,9847,0.037563323974609375
+human tongue,human_tongue_39,29,True,124,0.0004730224609375
+human tongue,human_tongue_40,24,True,7387,0.028179168701171875
+human tonsile,human_tonsile_1,126,True,8363,0.031902313232421875
+human tonsile,human_tonsile_10,32,True,14342,0.05471038818359375
+human tonsile,human_tonsile_11,77,True,17466,0.06662750244140625
+human tonsile,human_tonsile_12,121,True,12058,0.04599761962890625
+human tonsile,human_tonsile_2,115,True,22026,0.08402252197265625
+human tonsile,human_tonsile_3,87,True,19710,0.07518768310546875
+human tonsile,human_tonsile_4,77,True,16408,0.062591552734375
+human tonsile,human_tonsile_5,76,True,24837,0.09474563598632812
+human tonsile,human_tonsile_6,81,True,17426,0.06647491455078125
+human tonsile,human_tonsile_7,82,True,9252,0.0352935791015625
+human tonsile,human_tonsile_8,70,True,26852,0.1024322509765625
+human tonsile,human_tonsile_9,101,True,23984,0.09149169921875
+human umbilical cord,human_umbilical_cord_01,4,True,9431,0.035976409912109375
+human umbilical cord,human_umbilical_cord_02,2,True,4419,0.016857147216796875
+human umbilical cord,human_umbilical_cord_04,2,True,11888,0.04534912109375
+human umbilical cord,human_umbilical_cord_05,10,True,23592,0.089996337890625
+human umbilical cord,human_umbilical_cord_06,7,True,8181,0.031208038330078125
+human umbilical cord,human_umbilical_cord_07,23,True,28470,0.10860443115234375
+human umbilical cord,human_umbilical_cord_08,10,True,10275,0.039196014404296875
+human umbilical cord,human_umbilical_cord_09,8,True,7460,0.0284576416015625
+human umbilical cord,human_umbilical_cord_10,11,True,12864,0.049072265625
+human umbilical cord,human_umbilical_cord_11,18,True,6648,0.025360107421875
+human umbilical cord,human_umbilical_cord_12,11,True,13865,0.052890777587890625
+mouse fat (white and brown)_subscapula,mouse_subscapula_01,1,True,18579,0.07087326049804688
+mouse fat (white and brown)_subscapula,mouse_subscapula_02,1,True,3355,0.012798309326171875
+mouse fat (white and brown)_subscapula,mouse_subscapula_03,9,True,4845,0.018482208251953125
+mouse fat (white and brown)_subscapula,mouse_subscapula_04,2,True,8166,0.03115081787109375
+mouse fat (white and brown)_subscapula,mouse_subscapula_05,4,True,12232,0.046661376953125
+mouse fat (white and brown)_subscapula,mouse_subscapula_06,7,True,21798,0.08315277099609375
+mouse fat (white and brown)_subscapula,mouse_subscapula_07,22,True,9229,0.035205841064453125
+mouse fat (white and brown)_subscapula,mouse_subscapula_08,14,True,88,0.000335693359375
+mouse fat (white and brown)_subscapula,mouse_subscapula_09,23,True,55,0.000209808349609375
+mouse fat (white and brown)_subscapula,mouse_subscapula_10,19,True,10481,0.039981842041015625
+mouse fat (white and brown)_subscapula,mouse_subscapula_11,3,True,56,0.000213623046875
+mouse fat (white and brown)_subscapula,mouse_subscapula_12,4,True,5400,0.020599365234375
+mouse fat (white and brown)_subscapula,mouse_subscapula_13,1,True,155,0.000591278076171875
+mouse fat (white and brown)_subscapula,mouse_subscapula_14,7,True,47,0.000179290771484375
+mouse fat (white and brown)_subscapula,mouse_subscapula_15,4,True,60,0.0002288818359375
+mouse fat (white and brown)_subscapula,mouse_subscapula_16,19,True,9417,0.035923004150390625
+mouse fat (white and brown)_subscapula,mouse_subscapula_17,22,True,6562,0.02503204345703125
+mouse fat (white and brown)_subscapula,mouse_subscapula_18,26,True,12333,0.047046661376953125
+mouse fat (white and brown)_subscapula,mouse_subscapula_19,18,True,4958,0.01891326904296875
+mouse fat (white and brown)_subscapula,mouse_subscapula_20,34,True,7173,0.027362823486328125
+mouse fat (white and brown)_subscapula,mouse_subscapula_21,3,True,107,0.000408172607421875
+mouse fat (white and brown)_subscapula,mouse_subscapula_22,4,True,33,0.000125885009765625
+mouse fat (white and brown)_subscapula,mouse_subscapula_23,13,True,56,0.000213623046875
+mouse fat (white and brown)_subscapula,mouse_subscapula_24,3,True,28,0.0001068115234375
+mouse fat (white and brown)_subscapula,mouse_subscapula_25,6,True,29,0.000110626220703125
+mouse fat (white and brown)_subscapula,mouse_subscapula_26,10,True,49,0.000186920166015625
+mouse fat (white and brown)_subscapula,mouse_subscapula_27,13,True,2697,0.010288238525390625
+mouse fat (white and brown)_subscapula,mouse_subscapula_28,13,True,16094,0.06139373779296875
+mouse fat (white and brown)_subscapula,mouse_subscapula_29,28,True,18546,0.07074737548828125
+mouse fat (white and brown)_subscapula,mouse_subscapula_30,26,True,2376,0.009063720703125
+mouse fat (white and brown)_subscapula,mouse_subscapula_31,31,True,11682,0.04456329345703125
+mouse fat (white and brown)_subscapula,mouse_subscapula_32,3,True,5507,0.021007537841796875
+mouse fat (white and brown)_subscapula,mouse_subscapula_33,7,True,11413,0.043537139892578125
+mouse fat (white and brown)_subscapula,mouse_subscapula_34,17,True,18026,0.06876373291015625
+mouse fat (white and brown)_subscapula,mouse_subscapula_35,4,True,62,0.00023651123046875
+mouse fat (white and brown)_subscapula,mouse_subscapula_36,12,True,13123,0.050060272216796875
+mouse fat (white and brown)_subscapula,mouse_subscapula_37,5,True,9071,0.034603118896484375
+mouse fat (white and brown)_subscapula,mouse_subscapula_38,1,True,44,0.0001678466796875
+mouse fat (white and brown)_subscapula,mouse_subscapula_39,21,True,34,0.00012969970703125
+mouse fat (white and brown)_subscapula,mouse_subscapula_40,22,True,6327,0.024135589599609375
+mouse fat (white and brown)_subscapula,mouse_subscapula_41,26,True,10420,0.0397491455078125
+mouse fat (white and brown)_subscapula,mouse_subscapula_42,41,True,8430,0.03215789794921875
+mouse femur,mouse_femur_01,87,True,58019,0.22132492065429688
+mouse femur,mouse_femur_02,131,True,63219,0.24116134643554688
+mouse femur,mouse_femur_03,47,True,33408,0.12744140625
+mouse femur,mouse_femur_04,165,True,66981,0.2555122375488281
+mouse femur,mouse_femur_05,180,True,84791,0.3234519958496094
+mouse femur,mouse_femur_06,147,True,77104,0.29412841796875
+mouse heart,mouse_heart_01,28,True,41,0.000156402587890625
+mouse heart,mouse_heart_02,32,True,4133,0.015766143798828125
+mouse heart,mouse_heart_03,29,True,5177,0.019748687744140625
+mouse heart,mouse_heart_04,33,True,10286,0.03923797607421875
+mouse heart,mouse_heart_05,24,True,6397,0.024402618408203125
+mouse heart,mouse_heart_06,29,True,87,0.000331878662109375
+mouse heart,mouse_heart_07,28,True,5225,0.019931793212890625
+mouse heart,mouse_heart_08,14,True,38046,0.14513397216796875
+mouse heart,mouse_heart_09,25,True,8151,0.031093597412109375
+mouse heart,mouse_heart_10,21,True,20201,0.07706069946289062
+mouse heart,mouse_heart_11,12,True,22261,0.08491897583007812
+mouse heart,mouse_heart_12,18,True,20088,0.076629638671875
+mouse heart,mouse_heart_13,17,True,27150,0.10356903076171875
+mouse heart,mouse_heart_14,20,True,28880,0.11016845703125
+mouse heart,mouse_heart_15,28,True,5812,0.0221710205078125
+mouse heart,mouse_heart_16,22,True,82,0.00031280517578125
+mouse heart,mouse_heart_17,21,True,7043,0.026866912841796875
+mouse heart,mouse_heart_18,45,True,6052,0.0230865478515625
+mouse heart,mouse_heart_19,29,True,11460,0.0437164306640625
+mouse heart,mouse_heart_20,24,True,4837,0.018451690673828125
+mouse heart,mouse_heart_21,49,True,6514,0.02484893798828125
+mouse heart,mouse_heart_22,32,True,9788,0.0373382568359375
+mouse heart,mouse_heart_23,29,True,95,0.000362396240234375
+mouse heart,mouse_heart_24,31,True,4715,0.017986297607421875
+mouse heart,mouse_heart_25,29,True,6245,0.023822784423828125
+mouse heart,mouse_heart_26,26,True,5401,0.020603179931640625
+mouse heart,mouse_heart_27,15,True,3160,0.012054443359375
+mouse heart,mouse_heart_28,28,True,70,0.00026702880859375
+mouse kidney,mouse_kidney_01,42,True,33999,0.12969589233398438
+mouse kidney,mouse_kidney_02,42,True,22713,0.08664321899414062
+mouse kidney,mouse_kidney_03,44,True,14248,0.054351806640625
+mouse kidney,mouse_kidney_04,29,True,17446,0.06655120849609375
+mouse kidney,mouse_kidney_05,36,True,19693,0.07512283325195312
+mouse kidney,mouse_kidney_06,37,True,40675,0.15516281127929688
+mouse kidney,mouse_kidney_07,31,True,41764,0.1593170166015625
+mouse kidney,mouse_kidney_08,42,True,16564,0.0631866455078125
+mouse kidney,mouse_kidney_09,40,True,5516,0.0210418701171875
+mouse kidney,mouse_kidney_10,40,True,3971,0.015148162841796875
+mouse kidney,mouse_kidney_11,29,True,13559,0.051723480224609375
+mouse kidney,mouse_kidney_12,27,True,29029,0.11073684692382812
+mouse kidney,mouse_kidney_13,25,True,41645,0.15886306762695312
+mouse kidney,mouse_kidney_14,33,True,16155,0.061626434326171875
+mouse kidney,mouse_kidney_15,37,True,22870,0.08724212646484375
+mouse kidney,mouse_kidney_16,35,True,14053,0.053607940673828125
+mouse kidney,mouse_kidney_17,26,True,14001,0.053409576416015625
+mouse kidney,mouse_kidney_18,32,True,15612,0.0595550537109375
+mouse kidney,mouse_kidney_19,67,True,13762,0.05249786376953125
+mouse kidney,mouse_kidney_20,34,True,7973,0.030414581298828125
+mouse kidney,mouse_kidney_21,54,True,5428,0.0207061767578125
+mouse kidney,mouse_kidney_22,45,True,16612,0.0633697509765625
+mouse kidney,mouse_kidney_23,52,True,25774,0.09832000732421875
+mouse kidney,mouse_kidney_24,40,True,8734,0.03331756591796875
+mouse kidney,mouse_kidney_25,46,True,21157,0.08070755004882812
+mouse kidney,mouse_kidney_26,55,True,32678,0.12465667724609375
+mouse kidney,mouse_kidney_27,39,True,16078,0.06133270263671875
+mouse kidney,mouse_kidney_28,48,True,31441,0.11993789672851562
+mouse kidney,mouse_kidney_29,41,True,18626,0.07105255126953125
+mouse kidney,mouse_kidney_30,40,True,19244,0.0734100341796875
+mouse kidney,mouse_kidney_31,43,True,18408,0.070220947265625
+mouse kidney,mouse_kidney_32,50,True,13623,0.051967620849609375
+mouse kidney,mouse_kidney_33,31,True,33851,0.12913131713867188
+mouse kidney,mouse_kidney_34,49,True,28895,0.11022567749023438
+mouse kidney,mouse_kidney_35,32,True,16512,0.06298828125
+mouse kidney,mouse_kidney_36,35,True,35555,0.13563156127929688
+mouse kidney,mouse_kidney_37,41,True,22546,0.08600616455078125
+mouse kidney,mouse_kidney_38,31,True,19682,0.07508087158203125
+mouse kidney,mouse_kidney_39,41,True,21828,0.0832672119140625
+mouse kidney,mouse_kidney_40,56,True,34099,0.13007736206054688
+mouse liver,mouse_liver_01,15,True,53264,0.20318603515625
+mouse liver,mouse_liver_02,15,True,23787,0.09074020385742188
+mouse liver,mouse_liver_03,16,True,6283,0.023967742919921875
+mouse liver,mouse_liver_04,8,True,23967,0.09142684936523438
+mouse liver,mouse_liver_05,12,True,13270,0.05062103271484375
+mouse liver,mouse_liver_06,18,True,20956,0.0799407958984375
+mouse liver,mouse_liver_07,20,True,62172,0.2371673583984375
+mouse liver,mouse_liver_08,17,True,29498,0.11252593994140625
+mouse liver,mouse_liver_09,14,True,28720,0.10955810546875
+mouse liver,mouse_liver_10,15,True,30612,0.1167755126953125
+mouse liver,mouse_liver_11,28,True,13749,0.052448272705078125
+mouse liver,mouse_liver_12,22,True,40157,0.15318679809570312
+mouse liver,mouse_liver_13,14,True,22783,0.08691024780273438
+mouse liver,mouse_liver_14,20,True,57521,0.21942520141601562
+mouse liver,mouse_liver_15,14,True,32154,0.12265777587890625
+mouse liver,mouse_liver_16,22,True,45,0.000171661376953125
+mouse liver,mouse_liver_17,14,True,72,0.000274658203125
+mouse liver,mouse_liver_18,12,True,16613,0.06337356567382812
+mouse liver,mouse_liver_19,25,True,40234,0.15348052978515625
+mouse liver,mouse_liver_20,17,True,24077,0.09184646606445312
+mouse liver,mouse_liver_21,13,True,48549,0.18519973754882812
+mouse liver,mouse_liver_22,15,True,38966,0.14864349365234375
+mouse liver,mouse_liver_23,20,True,31998,0.12206268310546875
+mouse liver,mouse_liver_24,21,True,18587,0.07090377807617188
+mouse liver,mouse_liver_25,22,True,54524,0.2079925537109375
+mouse liver,mouse_liver_26,22,True,22872,0.087249755859375
+mouse liver,mouse_liver_27,23,True,25332,0.0966339111328125
+mouse liver,mouse_liver_28,21,True,29070,0.11089324951171875
+mouse liver,mouse_liver_29,12,True,12133,0.046283721923828125
+mouse liver,mouse_liver_30,20,True,29227,0.11149215698242188
+mouse liver,mouse_liver_31,22,True,26633,0.10159683227539062
+mouse liver,mouse_liver_32,29,True,34031,0.12981796264648438
+mouse liver,mouse_liver_33,28,True,14809,0.056491851806640625
+mouse liver,mouse_liver_34,13,True,8589,0.032764434814453125
+mouse liver,mouse_liver_35,12,True,25611,0.09769821166992188
+mouse liver,mouse_liver_36,15,True,45810,0.17475128173828125
+mouse muscle_tibia,mouse_muscle_tibia_01,5,True,9068,0.0345916748046875
+mouse muscle_tibia,mouse_muscle_tibia_02,14,True,118,0.00045013427734375
+mouse muscle_tibia,mouse_muscle_tibia_03,11,True,2766,0.01055145263671875
+mouse muscle_tibia,mouse_muscle_tibia_04,4,True,11664,0.04449462890625
+mouse muscle_tibia,mouse_muscle_tibia_05,11,True,86,0.00032806396484375
+mouse muscle_tibia,mouse_muscle_tibia_06,3,True,43,0.000164031982421875
+mouse muscle_tibia,mouse_muscle_tibia_07,5,True,5802,0.02213287353515625
+mouse muscle_tibia,mouse_muscle_tibia_08,3,True,6119,0.023342132568359375
+mouse muscle_tibia,mouse_muscle_tibia_09,8,True,24500,0.0934600830078125
+mouse muscle_tibia,mouse_muscle_tibia_10,9,True,14561,0.055545806884765625
+mouse muscle_tibia,mouse_muscle_tibia_11,6,True,12648,0.048248291015625
+mouse muscle_tibia,mouse_muscle_tibia_12,4,False,0,0.0
+mouse muscle_tibia,mouse_muscle_tibia_13,1,True,16771,0.06397628784179688
+mouse muscle_tibia,mouse_muscle_tibia_14,14,True,58,0.00022125244140625
+mouse muscle_tibia,mouse_muscle_tibia_15,6,True,27035,0.10313034057617188
+mouse muscle_tibia,mouse_muscle_tibia_16,9,True,12293,0.046894073486328125
+mouse muscle_tibia,mouse_muscle_tibia_17,8,True,32307,0.12324142456054688
+mouse muscle_tibia,mouse_muscle_tibia_18,7,True,16098,0.06140899658203125
+mouse muscle_tibia,mouse_muscle_tibia_19,2,True,67,0.000255584716796875
+mouse muscle_tibia,mouse_muscle_tibia_20,2,True,49,0.000186920166015625
+mouse muscle_tibia,mouse_muscle_tibia_21,4,True,66,0.00025177001953125
+mouse muscle_tibia,mouse_muscle_tibia_22,5,True,7179,0.027385711669921875
+mouse muscle_tibia,mouse_muscle_tibia_23,7,True,23354,0.08908843994140625
+mouse muscle_tibia,mouse_muscle_tibia_24,3,True,16015,0.061092376708984375
+mouse muscle_tibia,mouse_muscle_tibia_25,4,True,10809,0.041233062744140625
+mouse muscle_tibia,mouse_muscle_tibia_26,2,True,47,0.000179290771484375
+mouse muscle_tibia,mouse_muscle_tibia_27,2,True,25192,0.096099853515625
+mouse muscle_tibia,mouse_muscle_tibia_28,6,True,101,0.000385284423828125
+mouse spleen,mouse_spleen_01,236,True,10929,0.041690826416015625
+mouse spleen,mouse_spleen_02,297,True,13820,0.0527191162109375
+mouse spleen,mouse_spleen_03,200,True,20803,0.07935714721679688
+mouse spleen,mouse_spleen_04,241,True,11087,0.042293548583984375
+mouse spleen,mouse_spleen_05,227,True,16636,0.0634613037109375
+mouse spleen,mouse_spleen_06,245,True,20059,0.07651901245117188
+mouse spleen,mouse_spleen_07,211,True,12168,0.046417236328125
+mouse thymus,mouse_thymus_01,245,True,22686,0.08654022216796875
+mouse thymus,mouse_thymus_02,183,True,18715,0.07139205932617188
+mouse thymus,mouse_thymus_03,201,True,25973,0.09907913208007812
+mouse thymus,mouse_thymus_04,180,True,27540,0.1050567626953125
+mouse thymus,mouse_thymus_05,255,True,15207,0.058010101318359375
+mouse thymus,mouse_thymus_06,278,True,25189,0.09608840942382812

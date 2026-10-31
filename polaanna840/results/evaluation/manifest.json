@@ -1,0 +1,988 @@
+{
+  "status": "running",
+  "created_utc": "2026-10-26T15:03:40.899835+00:00",
+  "split_path": "/home/mtn212/splits_final_v1/tissue_folds.json",
+  "split_sha256": "1bc26ee83c8e345cb84bcf33ae3e3fe474a869942005724fa0115b1c6ca4104f",
+  "frozen_folds": {
+    "fold_1": [
+      "human cardia",
+      "human cerebellum",
+      "human epiglottis",
+      "human melanoma",
+      "human oesophagus",
+      "human spleen",
+      "mouse spleen"
+    ],
+    "fold_2": [
+      "human brain",
+      "human jejunum",
+      "human liver",
+      "human salivory gland",
+      "human testis",
+      "human tonsile"
+    ],
+    "fold_3": [
+      "human muscle",
+      "human pancreas",
+      "human peritoneum",
+      "mouse heart",
+      "mouse liver",
+      "mouse thymus"
+    ],
+    "fold_4": [
+      "human bladder",
+      "human pylorus",
+      "human rectum",
+      "human tongue",
+      "human umbilical cord",
+      "mouse fat (white and brown)_subscapula"
+    ],
+    "fold_5": [
+      "human kidney",
+      "human lung",
+      "human placenta",
+      "mouse femur",
+      "mouse kidney",
+      "mouse muscle_tibia"
+    ]
+  },
+  "vague_mask_template": "{data_root}/{tissue}/vague areas/mask binary/{stem}.png",
+  "device": "cuda",
+  "torch_version": "2.2.2+cu121",
+  "python_version": "3.11.3",
+  "prompt_batch_size": 8,
+  "mask_rule": "postprocessed_logits > model.mask_threshold",
+  "metric_definition": "hard binary per-nucleus Dice",
+  "checkpoint_identities": {
+    "1_lora_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_1/lora/seed_42/best_model.pt",
+      "sha256": "dde41f8cc3ee46bc96525ed81465b26af98047ce91f7b7f6937d61e199e5cded",
+      "config": {
+        "method": "lora",
+        "iteration": 1,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 130,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 1,
+        "seed": 42,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.09191557015963973
+      }
+    },
+    "1_lora_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_1/lora/seed_123/best_model.pt",
+      "sha256": "587fe23a3515822a71bc714fc19829d06eea5d94f41dd4be8188fcc4e16f7bb8",
+      "config": {
+        "method": "lora",
+        "iteration": 1,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 130,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 1,
+        "seed": 123,
+        "epochs_completed": 20,
+        "best_epoch": 19,
+        "best_val_loss": 0.09221566907340625
+      }
+    },
+    "1_lora_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_1/lora/seed_456/best_model.pt",
+      "sha256": "c9e9764d09d797e0ff9e92e56fad8eba1f1648ca750eaca7a5942a58949b288c",
+      "config": {
+        "method": "lora",
+        "iteration": 1,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 130,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 1,
+        "seed": 456,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.09198637209931174
+      }
+    },
+    "1_adapter_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_1/adapter/seed_42/best_model.pt",
+      "sha256": "0f8130b264754acb03a93e369014976f05978212bcb667b896dd4a27b3c6ee2a",
+      "config": {
+        "method": "adapter",
+        "iteration": 1,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 130,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 1,
+        "seed": 42,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.08424113957488981
+      }
+    },
+    "1_adapter_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_1/adapter/seed_123/best_model.pt",
+      "sha256": "75e24f68035b998f6a7094007028f97ca01e74be37f71b9603a5dda2781a76d4",
+      "config": {
+        "method": "adapter",
+        "iteration": 1,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 130,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 1,
+        "seed": 123,
+        "epochs_completed": 20,
+        "best_epoch": 18,
+        "best_val_loss": 0.08441363985677107
+      }
+    },
+    "1_adapter_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_1/adapter/seed_456/best_model.pt",
+      "sha256": "e3948679078bd052f2db5c106a3f43f78d5825db159a385270488ee682aaba39",
+      "config": {
+        "method": "adapter",
+        "iteration": 1,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 130,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 1,
+        "seed": 456,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.08442339874051798
+      }
+    },
+    "2_lora_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_2/lora/seed_42/best_model.pt",
+      "sha256": "3fbdfb917c8e3bf0b294625429f3c20fe057cfd632995c50a7af0e1591b96a5c",
+      "config": {
+        "method": "lora",
+        "iteration": 2,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 135,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 2,
+        "seed": 42,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.11064117084779018
+      }
+    },
+    "2_lora_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_2/lora/seed_123/best_model.pt",
+      "sha256": "c95c30350191e12fd63fcf6a4b3cdae99ea75078557a9580333d72ebcc8eb0a4",
+      "config": {
+        "method": "lora",
+        "iteration": 2,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 135,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 2,
+        "seed": 123,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.1105934828133926
+      }
+    },
+    "2_lora_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_2/lora/seed_456/best_model.pt",
+      "sha256": "dae5e7ed3a7ebc821d5334eebb5f52172c5a2dc892750094d082a47a05120648",
+      "config": {
+        "method": "lora",
+        "iteration": 2,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 135,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 2,
+        "seed": 456,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.1103815188206715
+      }
+    },
+    "2_adapter_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_2/adapter/seed_42/best_model.pt",
+      "sha256": "61e87d62bb283a64507ad011aa41085a04585a3cf979e6039e9da880b0b1e802",
+      "config": {
+        "method": "adapter",
+        "iteration": 2,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 135,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 2,
+        "seed": 42,
+        "epochs_completed": 20,
+        "best_epoch": 19,
+        "best_val_loss": 0.1022056762564548
+      }
+    },
+    "2_adapter_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_2/adapter/seed_123/best_model.pt",
+      "sha256": "9acc3ddee4bc44a61dcfc7c37a936ff8f34055af7cedd1fa9437f85f42abd8f0",
+      "config": {
+        "method": "adapter",
+        "iteration": 2,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 135,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 2,
+        "seed": 123,
+        "epochs_completed": 16,
+        "best_epoch": 13,
+        "best_val_loss": 0.10332185952682738
+      }
+    },
+    "2_adapter_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_2/adapter/seed_456/best_model.pt",
+      "sha256": "96387f8e5be8dac6a0c38909484469ea85214cc4770410b1ae298e4729c2ee2d",
+      "config": {
+        "method": "adapter",
+        "iteration": 2,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 135,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 2,
+        "seed": 456,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.10235125477322274
+      }
+    },
+    "3_lora_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_3/lora/seed_42/best_model.pt",
+      "sha256": "eb32f213c87d5ad4412e10fa489320a20a45573e5da1e547a2221f2e747fc2cf",
+      "config": {
+        "method": "lora",
+        "iteration": 3,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 401,
+        "val_images": 129,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 3,
+        "seed": 42,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.11240963599474942
+      }
+    },
+    "3_lora_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_3/lora/seed_123/best_model.pt",
+      "sha256": "114e9bc5192a43cbddbdf6a81ed2d8828c33807d99fef58bea415d1e5ceac5af",
+      "config": {
+        "method": "lora",
+        "iteration": 3,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 401,
+        "val_images": 129,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 3,
+        "seed": 123,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.11264133712731648
+      }
+    },
+    "3_lora_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_3/lora/seed_456/best_model.pt",
+      "sha256": "790cbb7f09b812666472112ed9d231fc18813b0e75dc35893f5bec53eaca29eb",
+      "config": {
+        "method": "lora",
+        "iteration": 3,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 401,
+        "val_images": 129,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 3,
+        "seed": 456,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.11251171616757967
+      }
+    },
+    "3_adapter_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_3/adapter/seed_42/best_model.pt",
+      "sha256": "ffee81aec13d5fd1cd12b963350c9f85f58ff928269ce84c6257b9b491c05095",
+      "config": {
+        "method": "adapter",
+        "iteration": 3,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 401,
+        "val_images": 129,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 3,
+        "seed": 42,
+        "epochs_completed": 20,
+        "best_epoch": 19,
+        "best_val_loss": 0.10303904154507602
+      }
+    },
+    "3_adapter_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_3/adapter/seed_123/best_model.pt",
+      "sha256": "c9dd8408c55e93764b55bf4f7b9ed1a482bcf0193f9431ddaab84c6caddc888f",
+      "config": {
+        "method": "adapter",
+        "iteration": 3,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 401,
+        "val_images": 129,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 3,
+        "seed": 123,
+        "epochs_completed": 17,
+        "best_epoch": 14,
+        "best_val_loss": 0.1036928483752476
+      }
+    },
+    "3_adapter_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_3/adapter/seed_456/best_model.pt",
+      "sha256": "8495974325f6d0e9693e482c993f7770029f7e198f41e01761b3c371453fbe02",
+      "config": {
+        "method": "adapter",
+        "iteration": 3,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 401,
+        "val_images": 129,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 3,
+        "seed": 456,
+        "epochs_completed": 20,
+        "best_epoch": 19,
+        "best_val_loss": 0.102798709813722
+      }
+    },
+    "4_lora_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_4/lora/seed_42/best_model.pt",
+      "sha256": "e8457c3056b8f16af791da43bbf8ab40756a0ee666108615cdc1e9b540346182",
+      "config": {
+        "method": "lora",
+        "iteration": 4,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 136,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 4,
+        "seed": 42,
+        "epochs_completed": 20,
+        "best_epoch": 19,
+        "best_val_loss": 0.10020051501616013
+      }
+    },
+    "4_lora_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_4/lora/seed_123/best_model.pt",
+      "sha256": "8d9b64972ab78e082bae40daff406e8cc1425d166f229738ab837e932a76f2dc",
+      "config": {
+        "method": "lora",
+        "iteration": 4,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 136,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 4,
+        "seed": 123,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.09996898551360252
+      }
+    },
+    "4_lora_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_4/lora/seed_456/best_model.pt",
+      "sha256": "f9ab98499902997c8cdda97540185476ea313b024f669080c5b7dda15b077c3a",
+      "config": {
+        "method": "lora",
+        "iteration": 4,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 136,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 4,
+        "seed": 456,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.10015084999972981
+      }
+    },
+    "4_adapter_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_4/adapter/seed_42/best_model.pt",
+      "sha256": "a3475d89359f0560135fa4d0070c4d5814573df86c4e4bfa5ad1b2670378a9fc",
+      "config": {
+        "method": "adapter",
+        "iteration": 4,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 136,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 4,
+        "seed": 42,
+        "epochs_completed": 19,
+        "best_epoch": 16,
+        "best_val_loss": 0.09110906410291243
+      }
+    },
+    "4_adapter_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_4/adapter/seed_123/best_model.pt",
+      "sha256": "ace581395f9b46b48f4de64f598d7d0bde9b93d25ca93d354fb85e57fe91edde",
+      "config": {
+        "method": "adapter",
+        "iteration": 4,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 136,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 4,
+        "seed": 123,
+        "epochs_completed": 17,
+        "best_epoch": 14,
+        "best_val_loss": 0.09196488018171615
+      }
+    },
+    "4_adapter_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_4/adapter/seed_456/best_model.pt",
+      "sha256": "ec2a8b8f38b9764272080e5b431e00cabb58ca197069485fe4d8d13307a7c7f5",
+      "config": {
+        "method": "adapter",
+        "iteration": 4,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 400,
+        "val_images": 136,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 4,
+        "seed": 456,
+        "epochs_completed": 13,
+        "best_epoch": 10,
+        "best_val_loss": 0.09273759025767075
+      }
+    },
+    "5_lora_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_5/lora/seed_42/best_model.pt",
+      "sha256": "3b50fe03a652c188cb96edb848fc7a032c6ed80849b639a31e3d8274a3828bdf",
+      "config": {
+        "method": "lora",
+        "iteration": 5,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 394,
+        "val_images": 135,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 5,
+        "seed": 42,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.09111403926422268
+      }
+    },
+    "5_lora_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_5/lora/seed_123/best_model.pt",
+      "sha256": "944af2d72f418eb62ebbffa3a67808f7733f8ab743d0398302f417f436f260bb",
+      "config": {
+        "method": "lora",
+        "iteration": 5,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 394,
+        "val_images": 135,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 5,
+        "seed": 123,
+        "epochs_completed": 20,
+        "best_epoch": 19,
+        "best_val_loss": 0.09120637276705734
+      }
+    },
+    "5_lora_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_5/lora/seed_456/best_model.pt",
+      "sha256": "eeb2c831a3ce5b6f5468c6641d4bedbdc702f536831acb9af38d9cae40cab729",
+      "config": {
+        "method": "lora",
+        "iteration": 5,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 394,
+        "val_images": 135,
+        "trainable_parameters": 29696
+      },
+      "completed": {
+        "status": "completed",
+        "method": "lora",
+        "iteration": 5,
+        "seed": 456,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.09116041012673155
+      }
+    },
+    "5_adapter_42": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_5/adapter/seed_42/best_model.pt",
+      "sha256": "6c7692c45d01cf9f203c1369b6e6078101ee9da060f271be32b64111a7edd136",
+      "config": {
+        "method": "adapter",
+        "iteration": 5,
+        "seed": 42,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 394,
+        "val_images": 135,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 5,
+        "seed": 42,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.08254502365469105
+      }
+    },
+    "5_adapter_123": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_5/adapter/seed_123/best_model.pt",
+      "sha256": "f46e15379b37953e89c0857bad7f78ebfba3d978c7100143628dfb727f5b1bd4",
+      "config": {
+        "method": "adapter",
+        "iteration": 5,
+        "seed": 123,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 394,
+        "val_images": 135,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 5,
+        "seed": 123,
+        "epochs_completed": 20,
+        "best_epoch": 20,
+        "best_val_loss": 0.08297132429433987
+      }
+    },
+    "5_adapter_456": {
+      "path": "/home/mtn212/NuInsSeg-MobileSAM/results/training/final_full_nuclei/iteration_5/adapter/seed_456/best_model.pt",
+      "sha256": "59a05211d0a1624457719af2efb0a186e65ed4088a7078335e334ab1d0f81470",
+      "config": {
+        "method": "adapter",
+        "iteration": 5,
+        "seed": 456,
+        "max_epochs": 20,
+        "patience": 3,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "lora_rank": 4,
+        "lora_alpha": 4,
+        "adapter_dim": 16,
+        "max_train_nuclei": null,
+        "prompt_batch_size": 8,
+        "device": "cuda",
+        "train_images": 394,
+        "val_images": 135,
+        "trainable_parameters": 61408
+      },
+      "completed": {
+        "status": "completed",
+        "method": "adapter",
+        "iteration": 5,
+        "seed": 456,
+        "epochs_completed": 12,
+        "best_epoch": 9,
+        "best_val_loss": 0.08437699565698427
+      }
+    }
+  }
+}
