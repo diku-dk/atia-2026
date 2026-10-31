@@ -1,0 +1,70 @@
+# Local environments and IDE
+.venv/
+venv/
+.idea/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Datasets
+data/*
+!data/README.md
+
+# Model weights and checkpoints
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Training logs and archives
+*.log
+*.tar
+*.tar.gz
+training_logs_import_*/
+wandb/
+
+# Exclude generated results by default
+/results/*
+
+# Include selected dataset statistics
+!/results/README.md
+!/results/dataset_inventory_corrected.csv
+!/results/nucleus_vague_overlap_by_tissue.csv
+!/results/tissue_profile.csv
+
+# Include final frozen tissue splits
+!/results/splits_final_v1/
+/results/splits_final_v1/*
+!/results/splits_final_v1/tissue_folds.json
+!/results/splits_final_v1/tissue_folds.csv
+!/results/splits_final_v1/fold_summary.csv
+!/results/splits_final_v1/split_sha256.txt
+
+# Include final analysis
+!/results/analysis/
+/results/analysis/*
+!/results/analysis/heldout_v2/
+/results/analysis/heldout_v2/*
+!/results/analysis/heldout_v2/*.csv
+!/results/analysis/heldout_v2/analysis_manifest.json
+# Explicitly excluded scripts
+06_DONTCOMMIT_vague_region_analysis.py
+091_folds_random.py
+ambiguity_metric.pdf
+
+# External MobileSAM dependency and pretrained weights
+/SAM_code_github/
+/*.pt
+/*.pth
+
+# Final evaluation metadata
+!/results/evaluation/
+/results/evaluation/*
+!/results/evaluation/manifest.json
+
+# Credentials and local configuration
+.env
+.env.*/experiments/run_all_training.py
+
+/experiments/run_all_training.py

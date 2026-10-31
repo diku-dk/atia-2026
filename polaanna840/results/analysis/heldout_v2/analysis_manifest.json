@@ -1,0 +1,7 @@
+{
+  "input_score_sha256": "866aa1dbfa3bc8c1de1538a80aed3dc14cac937bba1c5a019853a6f7be20e92a",
+  "bootstrap_seed": 2026,
+  "bootstrap_replicates": 10000,
+  "aggregation": "Equal-weight tissue means; seeds averaged within tissue",
+  "interval_warning": "Bootstrap intervals are descriptive sensitivity intervals, not fully calibrated inferential confidence intervals for overlapping CV training sets."
+}

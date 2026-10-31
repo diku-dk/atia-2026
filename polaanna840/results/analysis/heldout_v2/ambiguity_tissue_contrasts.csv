@@ -1,0 +1,187 @@
+comparison,method,iteration,tissue,contrast
+any_minus_none,lora,1,human cardia,0.015595447101665223
+any_minus_none,lora,1,human cerebellum,0.012574464714195103
+any_minus_none,lora,1,human epiglottis,0.007299710847104721
+any_minus_none,lora,1,human melanoma,0.016709278878679845
+any_minus_none,lora,1,human oesophagus,0.004517905664593799
+any_minus_none,lora,1,human spleen,0.0021387726730064185
+any_minus_none,lora,1,mouse spleen,0.0009590839565730286
+any_minus_none,lora,2,human brain,0.009702579278966283
+any_minus_none,lora,2,human jejunum,0.01016178195933811
+any_minus_none,lora,2,human liver,0.011866548693428236
+any_minus_none,lora,2,human salivory gland,0.01370772098865719
+any_minus_none,lora,2,human testis,0.03158786533978205
+any_minus_none,lora,2,human tonsile,0.006104007288922492
+any_minus_none,lora,3,human muscle,0.0036161120068973207
+any_minus_none,lora,3,human pancreas,0.0018170517652624577
+any_minus_none,lora,3,human peritoneum,0.010542271243068203
+any_minus_none,lora,3,mouse heart,-0.012147150676763342
+any_minus_none,lora,3,mouse liver,0.00330531142911461
+any_minus_none,lora,3,mouse thymus,0.010410014877250531
+any_minus_none,lora,4,human bladder,0.019871207961199677
+any_minus_none,lora,4,human pylorus,0.00814180955801258
+any_minus_none,lora,4,human rectum,0.04594206612488895
+any_minus_none,lora,4,human tongue,0.006686965265206894
+any_minus_none,lora,4,human umbilical cord,0.035605616803476646
+any_minus_none,lora,4,mouse fat (white and brown)_subscapula,0.0035815801257435415
+any_minus_none,lora,5,human kidney,0.007778192484694739
+any_minus_none,lora,5,human lung,0.01831153078248033
+any_minus_none,lora,5,human placenta,0.01132475745286602
+any_minus_none,lora,5,mouse femur,0.003345045389003612
+any_minus_none,lora,5,mouse kidney,-0.005735353808357067
+any_minus_none,lora,5,mouse muscle_tibia,0.03476260004189487
+any_minus_none,adapter,1,human cardia,0.019983049279595315
+any_minus_none,adapter,1,human cerebellum,0.014666246989102311
+any_minus_none,adapter,1,human epiglottis,0.01112827672421672
+any_minus_none,adapter,1,human melanoma,0.017459698804073276
+any_minus_none,adapter,1,human oesophagus,0.006662527446347932
+any_minus_none,adapter,1,human spleen,0.0015871623621931327
+any_minus_none,adapter,1,mouse spleen,0.002371332514373603
+any_minus_none,adapter,2,human brain,0.0045158908570278045
+any_minus_none,adapter,2,human jejunum,0.013939748899394089
+any_minus_none,adapter,2,human liver,0.012522165556078803
+any_minus_none,adapter,2,human salivory gland,0.012336168821702194
+any_minus_none,adapter,2,human testis,0.03398811085360318
+any_minus_none,adapter,2,human tonsile,0.00890013698020891
+any_minus_none,adapter,3,human muscle,0.01667493260497316
+any_minus_none,adapter,3,human pancreas,0.0017155970535438422
+any_minus_none,adapter,3,human peritoneum,0.011229367686855993
+any_minus_none,adapter,3,mouse heart,-0.012817527751628963
+any_minus_none,adapter,3,mouse liver,0.004830914216111704
+any_minus_none,adapter,3,mouse thymus,0.010110307835455079
+any_minus_none,adapter,4,human bladder,0.021495526683376703
+any_minus_none,adapter,4,human pylorus,0.014831021516480906
+any_minus_none,adapter,4,human rectum,0.0500249852187634
+any_minus_none,adapter,4,human tongue,0.008040868739941642
+any_minus_none,adapter,4,human umbilical cord,0.03363017396172999
+any_minus_none,adapter,4,mouse fat (white and brown)_subscapula,-0.0015405661175964813
+any_minus_none,adapter,5,human kidney,0.010153609577439972
+any_minus_none,adapter,5,human lung,0.01678824815619711
+any_minus_none,adapter,5,human placenta,0.01321125409763016
+any_minus_none,adapter,5,mouse femur,0.0025559806315961775
+any_minus_none,adapter,5,mouse kidney,-0.006599012782001368
+any_minus_none,adapter,5,mouse muscle_tibia,0.038215245992539525
+full_minus_none,lora,1,human cardia,0.014385483380929771
+full_minus_none,lora,1,human cerebellum,0.014688431262796762
+full_minus_none,lora,1,human epiglottis,-0.0003883627397242989
+full_minus_none,lora,1,human melanoma,0.017893540475062066
+full_minus_none,lora,1,human oesophagus,0.002758042652180194
+full_minus_none,lora,1,human spleen,-0.0029166526139812396
+full_minus_none,lora,1,mouse spleen,-0.0007055987622293369
+full_minus_none,lora,2,human brain,0.009874358070174644
+full_minus_none,lora,2,human jejunum,0.007912204493785567
+full_minus_none,lora,2,human liver,0.014148591004180512
+full_minus_none,lora,2,human salivory gland,0.011419488033747593
+full_minus_none,lora,2,human testis,0.03023068692518232
+full_minus_none,lora,2,human tonsile,0.004811169900297563
+full_minus_none,lora,3,human muscle,0.0036333076195847885
+full_minus_none,lora,3,human pancreas,-0.0008797982226076764
+full_minus_none,lora,3,human peritoneum,0.01275183198775725
+full_minus_none,lora,3,mouse heart,-0.013191957066710287
+full_minus_none,lora,3,mouse liver,0.0032840503368804924
+full_minus_none,lora,3,mouse thymus,0.021091982566825096
+full_minus_none,lora,4,human bladder,0.02118927722871876
+full_minus_none,lora,4,human pylorus,0.012210245428583164
+full_minus_none,lora,4,human rectum,0.04940633755681212
+full_minus_none,lora,4,human tongue,0.011756024870505734
+full_minus_none,lora,4,human umbilical cord,0.033063625118551966
+full_minus_none,lora,4,mouse fat (white and brown)_subscapula,0.0031801131939354493
+full_minus_none,lora,5,human kidney,0.011034419291786064
+full_minus_none,lora,5,human lung,0.020092395428810528
+full_minus_none,lora,5,human placenta,0.008781240821624833
+full_minus_none,lora,5,mouse femur,0.005722074248109228
+full_minus_none,lora,5,mouse kidney,-0.006510287494331558
+full_minus_none,lora,5,mouse muscle_tibia,0.03421794245983871
+full_minus_none,adapter,1,human cardia,0.019240913294175065
+full_minus_none,adapter,1,human cerebellum,0.014860668158988042
+full_minus_none,adapter,1,human epiglottis,0.00322469359380486
+full_minus_none,adapter,1,human melanoma,0.019121234084401792
+full_minus_none,adapter,1,human oesophagus,0.005077739900695724
+full_minus_none,adapter,1,human spleen,-0.0036579424757260323
+full_minus_none,adapter,1,mouse spleen,0.0009500718546374687
+full_minus_none,adapter,2,human brain,0.0040788911500824546
+full_minus_none,adapter,2,human jejunum,0.01097599010102851
+full_minus_none,adapter,2,human liver,0.014238106981787547
+full_minus_none,adapter,2,human salivory gland,0.011724651768473114
+full_minus_none,adapter,2,human testis,0.031241961966245617
+full_minus_none,adapter,2,human tonsile,0.00709648177381994
+full_minus_none,adapter,3,human muscle,0.018434859080493055
+full_minus_none,adapter,3,human pancreas,-0.0020766872713820286
+full_minus_none,adapter,3,human peritoneum,0.014445879268823791
+full_minus_none,adapter,3,mouse heart,-0.014652033014601953
+full_minus_none,adapter,3,mouse liver,0.005131578963219682
+full_minus_none,adapter,3,mouse thymus,0.019975932271943636
+full_minus_none,adapter,4,human bladder,0.022555942700881404
+full_minus_none,adapter,4,human pylorus,0.019133620631235408
+full_minus_none,adapter,4,human rectum,0.05876091558651229
+full_minus_none,adapter,4,human tongue,0.013994991387751593
+full_minus_none,adapter,4,human umbilical cord,0.03092253514733012
+full_minus_none,adapter,4,mouse fat (white and brown)_subscapula,-0.0010677509682255337
+full_minus_none,adapter,5,human kidney,0.01532849321866079
+full_minus_none,adapter,5,human lung,0.01897729259003582
+full_minus_none,adapter,5,human placenta,0.009933490602416807
+full_minus_none,adapter,5,mouse femur,0.002690109677249475
+full_minus_none,adapter,5,mouse kidney,-0.0075148521211087504
+full_minus_none,adapter,5,mouse muscle_tibia,0.0368564082490855
+full_minus_partial,lora,1,human cardia,-0.006733711141484272
+full_minus_partial,lora,1,human cerebellum,0.006013060404911379
+full_minus_partial,lora,1,human epiglottis,-0.2485810459741382
+full_minus_partial,lora,1,human melanoma,0.012389198239075479
+full_minus_partial,lora,1,human oesophagus,-0.0034942207637777348
+full_minus_partial,lora,1,human spleen,-0.01434090030390378
+full_minus_partial,lora,1,mouse spleen,-0.002550477193027492
+full_minus_partial,lora,2,human brain,0.003006128846146365
+full_minus_partial,lora,2,human jejunum,-0.004114092121686175
+full_minus_partial,lora,2,human liver,0.007284981222786119
+full_minus_partial,lora,2,human salivory gland,-0.004863825397179923
+full_minus_partial,lora,2,human testis,-0.038000995608792415
+full_minus_partial,lora,2,human tonsile,-0.0033790068111787808
+full_minus_partial,lora,3,human muscle,0.00016335832053081256
+full_minus_partial,lora,3,human pancreas,-0.007388009210467783
+full_minus_partial,lora,3,human peritoneum,0.008627808622119107
+full_minus_partial,lora,3,mouse heart,-0.008358451119575595
+full_minus_partial,lora,3,mouse liver,-0.0002901513763716168
+full_minus_partial,lora,3,mouse thymus,0.015320190502152997
+full_minus_partial,lora,4,human bladder,0.011109440969089411
+full_minus_partial,lora,4,human pylorus,0.07323184567027066
+full_minus_partial,lora,4,human rectum,0.011547571439743873
+full_minus_partial,lora,4,human tongue,0.011036433571030367
+full_minus_partial,lora,4,human umbilical cord,-0.07371775886281591
+full_minus_partial,lora,4,mouse fat (white and brown)_subscapula,-0.0030292504854610713
+full_minus_partial,lora,5,human kidney,0.005385298180958724
+full_minus_partial,lora,5,human lung,0.015038412569010506
+full_minus_partial,lora,5,human placenta,-0.004642265326964781
+full_minus_partial,lora,5,mouse femur,0.0041389493730917895
+full_minus_partial,lora,5,mouse kidney,-0.0038159613324501504
+full_minus_partial,lora,5,mouse muscle_tibia,-0.0031123290403208548
+full_minus_partial,adapter,1,human cardia,-0.004130148092773539
+full_minus_partial,adapter,1,human cerebellum,0.0005530202165638654
+full_minus_partial,adapter,1,human epiglottis,-0.2555491878833166
+full_minus_partial,adapter,1,human melanoma,0.017382215240359787
+full_minus_partial,adapter,1,human oesophagus,-0.0031466071558601816
+full_minus_partial,adapter,1,human spleen,-0.014878970866750267
+full_minus_partial,adapter,1,mouse spleen,-0.0021775277997792275
+full_minus_partial,adapter,2,human brain,-0.0076474948715435365
+full_minus_partial,adapter,2,human jejunum,-0.005420207532146046
+full_minus_partial,adapter,2,human liver,0.005477813012839422
+full_minus_partial,adapter,2,human salivory gland,-0.0012998292712822768
+full_minus_partial,adapter,2,human testis,-0.07689216884601194
+full_minus_partial,adapter,2,human tonsile,-0.004714098834880255
+full_minus_partial,adapter,3,human muscle,0.016719301517439014
+full_minus_partial,adapter,3,human pancreas,-0.010388946974166681
+full_minus_partial,adapter,3,human peritoneum,0.012559711891493283
+full_minus_partial,adapter,3,mouse heart,-0.014676042103783885
+full_minus_partial,adapter,3,mouse liver,0.004103189489944176
+full_minus_partial,adapter,3,mouse thymus,0.014149382415490172
+full_minus_partial,adapter,4,human bladder,0.008937792147539599
+full_minus_partial,adapter,4,human pylorus,0.07744678406558106
+full_minus_partial,adapter,4,human rectum,0.029119767892496262
+full_minus_partial,adapter,4,human tongue,0.012963406271181172
+full_minus_partial,adapter,4,human umbilical cord,-0.07852152561759553
+full_minus_partial,adapter,4,mouse fat (white and brown)_subscapula,0.003567605217980885
+full_minus_partial,adapter,5,human kidney,0.008558461406634438
+full_minus_partial,adapter,5,human lung,0.018485264107971217
+full_minus_partial,adapter,5,human placenta,-0.005982366160662611
+full_minus_partial,adapter,5,mouse femur,0.00023354925931736575
+full_minus_partial,adapter,5,mouse kidney,-0.004509814927422806
+full_minus_partial,adapter,5,mouse muscle_tibia,-0.007764787105451587

@@ -1,0 +1,32 @@
+fold,tissue,species,n_images,n_nuclei,n_vague_nuclei
+1,human cardia,human,12,671,128
+1,human cerebellum,human,12,549,128
+1,human epiglottis,human,11,228,97
+1,human melanoma,human,12,533,136
+1,human oesophagus,human,47,2046,274
+1,human spleen,human,34,3286,139
+1,mouse spleen,mouse,7,1657,167
+2,human brain,human,12,146,35
+2,human jejunum,human,10,874,203
+2,human liver,human,40,1370,249
+2,human salivory gland,human,44,3129,457
+2,human testis,human,12,380,28
+2,human tonsile,human,12,1045,115
+3,human muscle,human,9,127,38
+3,human pancreas,human,44,2178,326
+3,human peritoneum,human,12,468,82
+3,mouse heart,mouse,28,738,56
+3,mouse liver,mouse,36,646,232
+3,mouse thymus,mouse,6,1342,218
+4,human bladder,human,12,400,59
+4,human pylorus,human,12,441,36
+4,human rectum,human,12,349,20
+4,human tongue,human,40,1415,172
+4,human umbilical cord,human,11,106,29
+4,mouse fat (white and brown)_subscapula,mouse,42,549,83
+5,human kidney,human,11,1222,301
+5,human lung,human,11,318,76
+5,human placenta,human,40,1966,334
+5,mouse femur,mouse,6,757,397
+5,mouse kidney,mouse,40,1597,325
+5,mouse muscle_tibia,mouse,28,165,40

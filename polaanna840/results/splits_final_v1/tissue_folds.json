@@ -1,0 +1,57 @@
+{
+    "description": "Tissue-exclusive five-fold split. Deterministic largest-first image-count balancing with seeded tie-breaking. No ambiguity or model-performance optimization.",
+    "method": "largest_first_greedy_image_balancing",
+    "random_seed": 42,
+    "n_folds": 5,
+    "fold_capacities": [
+        7,
+        6,
+        6,
+        6,
+        6
+    ],
+    "assignment_sha256": "113a2f9232ecee367504d0f6b9d2cfed9ab8c3940889dd181e343438f2be71dd",
+    "folds": {
+        "fold_1": [
+            "human cardia",
+            "human cerebellum",
+            "human epiglottis",
+            "human melanoma",
+            "human oesophagus",
+            "human spleen",
+            "mouse spleen"
+        ],
+        "fold_2": [
+            "human brain",
+            "human jejunum",
+            "human liver",
+            "human salivory gland",
+            "human testis",
+            "human tonsile"
+        ],
+        "fold_3": [
+            "human muscle",
+            "human pancreas",
+            "human peritoneum",
+            "mouse heart",
+            "mouse liver",
+            "mouse thymus"
+        ],
+        "fold_4": [
+            "human bladder",
+            "human pylorus",
+            "human rectum",
+            "human tongue",
+            "human umbilical cord",
+            "mouse fat (white and brown)_subscapula"
+        ],
+        "fold_5": [
+            "human kidney",
+            "human lung",
+            "human placenta",
+            "mouse femur",
+            "mouse kidney",
+            "mouse muscle_tibia"
+        ]
+    }
+}
