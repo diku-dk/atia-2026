@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+.env
+.env.*
+
+# Model checkpoints and weights
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# MRI data
+*.mat
+*.nii
+*.nii.gz
+*.dcm
+
+# Job logs
+*.out
+*.err
+slurm-*.out
+
+# Temporary files
+.DS_Store
+*.tmp
+
+# Generated Slurm logs
+logs/
