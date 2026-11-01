@@ -1,0 +1,10 @@
+# Python 3.10.22
+# PyTorch environment uses CUDA 12.6.
+# Install a compatible PyTorch build separately.
+
+numpy==2.2.6
+pandas==2.3.3
+h5py==3.16.0
+matplotlib==3.10.9
+Pillow==12.3.0
+scikit-image==0.25.2

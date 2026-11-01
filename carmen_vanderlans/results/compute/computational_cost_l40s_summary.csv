@@ -1,0 +1,11 @@
+method,budget,n,time_mean_min,time_sd_min,memory_mean_gib,memory_max_gib
+adapter,10,5,14.66,1.37,1.86,1.86
+adapter,100,5,88.88,30.89,1.86,1.86
+adapter,10_fewpatients,5,15.15,1.76,1.86,1.86
+adapter,25,5,23.62,3.12,1.86,1.86
+adapter,50,5,72.55,42.32,1.86,1.86
+lora,10,5,26.07,3.55,1.81,1.81
+lora,100,5,79.68,1.08,1.81,1.81
+lora,10_fewpatients,5,21.61,4.61,1.81,1.81
+lora,25,5,48.39,22.0,1.81,1.81
+lora,50,5,237.92,239.89,1.81,1.81

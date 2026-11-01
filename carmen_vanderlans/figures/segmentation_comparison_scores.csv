@@ -1,0 +1,21 @@
+file,example,method,dice
+brainTumorDataPublic_1-766/234.mat,Meningioma: good,MobileSAM,0.9631595881595881
+brainTumorDataPublic_1-766/234.mat,Meningioma: good,MedSAM,0.9626501035196687
+brainTumorDataPublic_1-766/234.mat,Meningioma: good,LoRA,0.9763958977698193
+brainTumorDataPublic_1-766/234.mat,Meningioma: good,Adapter,0.9808565866320571
+brainTumorDataPublic_2299-3064/2595.mat,Glioma: improvement,MobileSAM,0.15507883173946757
+brainTumorDataPublic_2299-3064/2595.mat,Glioma: improvement,MedSAM,0.8395657418576599
+brainTumorDataPublic_2299-3064/2595.mat,Glioma: improvement,LoRA,0.9079614189962399
+brainTumorDataPublic_2299-3064/2595.mat,Glioma: improvement,Adapter,0.9020326557814062
+brainTumorDataPublic_767-1532/829.mat,Glioma: difficult,MobileSAM,0.6216
+brainTumorDataPublic_767-1532/829.mat,Glioma: difficult,MedSAM,0.6313207032847212
+brainTumorDataPublic_767-1532/829.mat,Glioma: difficult,LoRA,0.6872843610814879
+brainTumorDataPublic_767-1532/829.mat,Glioma: difficult,Adapter,0.6749968286185463
+brainTumorDataPublic_1-766/639.mat,Meningioma: MedSAM failure,MobileSAM,0.9148717948717948
+brainTumorDataPublic_1-766/639.mat,Meningioma: MedSAM failure,MedSAM,0.9052631578947369
+brainTumorDataPublic_1-766/639.mat,Meningioma: MedSAM failure,LoRA,0.9456740442655935
+brainTumorDataPublic_1-766/639.mat,Meningioma: MedSAM failure,Adapter,0.9491525423728814
+brainTumorDataPublic_1533-2298/1741.mat,Pituitary: difficult,MobileSAM,0.8021680216802168
+brainTumorDataPublic_1533-2298/1741.mat,Pituitary: difficult,MedSAM,0.8156182212581344
+brainTumorDataPublic_1533-2298/1741.mat,Pituitary: difficult,LoRA,0.8484429065743945
+brainTumorDataPublic_1533-2298/1741.mat,Pituitary: difficult,Adapter,0.8551434569629112
